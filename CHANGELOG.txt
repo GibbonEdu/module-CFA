@@ -5,7 +5,5 @@ v1.0.00
 Added ability to create columns
 Ability to enter data
 Ability to view data (parents, students, staff)
-
-TODO:
 Hook into student profile
 Hook into parental dashboard

@@ -163,4 +163,19 @@ $actionRows[5]["categoryPermissionStaff"]="Y" ;
 $actionRows[5]["categoryPermissionStudent"]="N" ;
 $actionRows[5]["categoryPermissionParent"]="N" ;
 $actionRows[5]["categoryPermissionOther"]="N" ;
+
+$array=array() ;
+$array=array() ;
+$array["sourceModuleName"]="CFA" ;
+$array["sourceModuleAction"]="View CFAs_all" ;
+$array["sourceModuleInclude"]="hook_studentProfile_cfaView.php" ;
+$hooks[0]="INSERT INTO `gibbonHook` (`gibbonHookID`, `name`, `type`, `options`, gibbonModuleID) VALUES (NULL, 'CFA', 'Student Profile', '" . serialize($array) . "', (SELECT gibbonModuleID FROM gibbonModule WHERE name='$name'));" ;
+
+$array=array() ;
+$array["sourceModuleName"]="CFA" ;
+$array["sourceModuleAction"]="View CFAs_myChildrens" ;
+$array["sourceModuleInclude"]="hook_parentalDashboard_cfaView.php" ;
+$hooks[1]="INSERT INTO `gibbonHook` (`gibbonHookID`, `name`, `type`, `options`, gibbonModuleID) VALUES (NULL, 'CFA', 'Parental Dashboard', '" . serialize($array) . "', (SELECT gibbonModuleID FROM gibbonModule WHERE name='$name'));" ;
+
+
 ?>
