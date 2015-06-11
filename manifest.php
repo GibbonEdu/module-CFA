@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //This file describes the module, including database tables
 
 //Basica variables
-$name="Credentials" ;
+$name="CFA" ;
 $description="The CFA module allows schools to run a program of Common Formative Assessments." ;
 $entryURL="cfa_view.php" ;
 $type="Additional" ;

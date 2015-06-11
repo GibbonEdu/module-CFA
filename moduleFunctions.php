@@ -18,4 +18,66 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+function sidebarExtra($guid, $connection2, $gibbonCourseClassID) {
+	$output="" ;
+	
+	$output.="<h2>" ;
+	$output.=_("View Classes") ;
+	$output.="</h2>" ;
+	
+	$selectCount=0 ;
+	$output.="<form method='get' action='" . $_SESSION[$guid]["absoluteURL"] . "/index.php'>" ;
+		$output.="<table class='smallIntBorder' cellspacing='0' style='width: 100%; margin: 0px 0px'>" ;	
+			$output.="<tr>" ;
+				$output.="<td style='width: 190px'>" ; 
+					$output.="<input name='q' id='q' type='hidden' value='/modules/CFA/cfa_manage.php'>" ;
+					$output.="<select name='gibbonCourseClassID' id='gibbonCourseClassID' style='width:161px'>" ;
+						$output.="<option value=''></option>" ;
+							try {
+								$dataSelect=array("gibbonSchoolYearID"=>$_SESSION[$guid]["gibbonSchoolYearID"], "gibbonPersonID"=>$_SESSION[$guid]["gibbonPersonID"]); 
+								$sqlSelect="SELECT gibbonCourseClass.gibbonCourseClassID, gibbonCourse.nameShort AS course, gibbonCourseClass.nameShort AS class FROM gibbonCourseClassPerson JOIN gibbonCourseClass ON (gibbonCourseClassPerson.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) JOIN gibbonCourse ON (gibbonCourseClass.gibbonCourseID=gibbonCourse.gibbonCourseID) WHERE gibbonCourse.gibbonSchoolYearID=:gibbonSchoolYearID AND gibbonPersonID=:gibbonPersonID ORDER BY course, class" ;
+								$resultSelect=$connection2->prepare($sqlSelect);
+								$resultSelect->execute($dataSelect);
+							}
+							catch(PDOException $e) { }
+							$output.="<optgroup label='--" . _('My Classes') . "--'>" ;
+							while ($rowSelect=$resultSelect->fetch()) {
+								$selected="" ;
+								if ($rowSelect["gibbonCourseClassID"]==$gibbonCourseClassID AND $selectCount==0) {
+									$selected="selected" ;
+									$selectCount++ ;
+								}
+								$output.="<option $selected value='" . $rowSelect["gibbonCourseClassID"] . "'>" . htmlPrep($rowSelect["course"]) . "." . htmlPrep($rowSelect["class"]) . "</option>" ;
+							}
+						$output.="</optgroup>" ;
+						
+						try {
+							$dataSelect=array("gibbonSchoolYearID"=>$_SESSION[$guid]["gibbonSchoolYearID"]); 
+							$sqlSelect="SELECT gibbonCourseClass.gibbonCourseClassID, gibbonCourse.nameShort AS course, gibbonCourseClass.nameShort AS class FROM gibbonCourseClass JOIN gibbonCourse ON (gibbonCourseClass.gibbonCourseID=gibbonCourse.gibbonCourseID) WHERE gibbonCourse.gibbonSchoolYearID=:gibbonSchoolYearID ORDER BY course, class" ;
+							$resultSelect=$connection2->prepare($sqlSelect);
+							$resultSelect->execute($dataSelect);
+						}
+						catch(PDOException $e) { }
+						$output.="<optgroup label='--" . _('All Classes') . "--'>" ;
+							while ($rowSelect=$resultSelect->fetch()) {
+								$selected="" ;
+								if ($rowSelect["gibbonCourseClassID"]==$gibbonCourseClassID AND $selectCount==0) {
+									$selected="selected" ;
+									$selectCount++ ;
+								}
+								$output.="<option $selected value='" . $rowSelect["gibbonCourseClassID"] . "'>" . htmlPrep($rowSelect["course"]) . "." . htmlPrep($rowSelect["class"]) . "</option>" ;
+							}
+						$output.="</optgroup>" ;
+					 $output.="</select>" ;
+				$output.="</td>" ;
+				$output.="<td class='right'>" ;
+					$output.="<input type='submit' value='" . _('Go') . "'>" ;
+				$output.="</td>" ;
+			$output.="</tr>" ;
+		$output.="</table>" ;
+	$output.="</form>" ;
+	
+	return $output ;
+}
+
 ?>
