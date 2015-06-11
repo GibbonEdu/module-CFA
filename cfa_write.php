@@ -68,10 +68,10 @@ else {
 		}
 		if ($gibbonCourseClassID=="") {
 			print "<div class='trail'>" ;
-			print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>" ._('View Markbook') . "</div>" ;
+			print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>" ._('Write CFAs') . "</div>" ;
 			print "</div>" ;
 			print "<div class='warning'>" ;
-				print "Use the class listing on the right to choose a Markbook to view." ;
+				print "Use the class listing on the right to choose a CFA to write." ;
 			print "</div>" ;
 		}
 		//Check existence of and access to this class.
@@ -93,7 +93,7 @@ else {
 			}
 			if ($result->rowCount()!=1) {
 				print "<div class='trail'>" ;
-				print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>" . _('View Markbook') . "</div>" ;
+				print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>" . _('Write CFAs') . "</div>" ;
 				print "</div>" ;
 				print "<div class='error'>" ;
 					print _("The specified record does not exist or you do not have access to it.") ;
@@ -104,7 +104,7 @@ else {
 				$courseName=$row["courseName"] ;
 				$gibbonYearGroupIDList=$row["gibbonYearGroupIDList"] ;
 				print "<div class='trail'>" ;
-				print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>View " . $row["course"] . "." . $row["class"] . " Markbook</div>" ;
+				print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>Write " . $row["course"] . "." . $row["class"] . " CFAs</div>" ;
 				print "</div>" ;
 				
 				if (isset($_GET["deleteReturn"])) { $deleteReturn=$_GET["deleteReturn"] ; } else { $deleteReturn="" ; }
@@ -252,7 +252,7 @@ else {
 						print "<p>" ;
 							print _("To see more detail on an item (such as a comment or a grade), hover your mouse over it.") ;
 							if ($externalAssessment==TRUE) {
-								print " " . _('The Baseline column is populated based on student performance in external assessments, and can be used as a reference point for the grades in the markbook.') ;
+								print " " . _('The Baseline column is populated based on student performance in external assessments, and can be used as a reference point for the grades in the CFA.') ;
 							}
 						print "</p>" ;
 					
@@ -539,7 +539,7 @@ else {
 															print "<div $styleAttainment title='" . htmlPrep($rowEntry["attainmentDescriptor"]) . "'>$attainment" ;
 														}
 														if ($gibbonRubricIDAttainment[$i]!="") {
-															print "<a class='thickbox' href='" . $_SESSION[$guid]["absoluteURL"] . "/fullscreen.php?q=/modules/" . $_SESSION[$guid]["module"] . "/markbook_view_rubric.php&gibbonRubricID=" . $gibbonRubricIDAttainment[$i] . "&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=" . $columnID[$i] . "&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&mark=FALSE&type=attainment&width=1100&height=550'><img style='margin-bottom: -3px; margin-left: 3px' title='" . _('View Rubric') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/rubric.png'/></a>" ;
+															print "<a class='thickbox' href='" . $_SESSION[$guid]["absoluteURL"] . "/fullscreen.php?q=/modules/CFA/cfa_write_rubric.php&gibbonRubricID=" . $gibbonRubricIDAttainment[$i] . "&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=" . $columnID[$i] . "&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&mark=FALSE&type=attainment&width=1100&height=550'><img style='margin-bottom: -3px; margin-left: 3px' title='" . _('View Rubric') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/rubric.png'/></a>" ;
 														}
 														if ($attainmentID[$i]!="") {
 															print "</div>" ;
@@ -572,7 +572,7 @@ else {
 															print "<div $styleEffort title='" . htmlPrep($rowEntry["effortDescriptor"]) . "'>$effort" ;
 														}	
 														if ($gibbonRubricIDEffort[$i]!="") {
-															print "<a class='thickbox' href='" . $_SESSION[$guid]["absoluteURL"] . "/fullscreen.php?q=/modules/" . $_SESSION[$guid]["module"] . "/markbook_view_rubric.php&gibbonRubricID=" . $gibbonRubricIDEffort[$i] . "&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=" . $columnID[$i] . "&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&mark=FALSE&type=effort&width=1100&height=550'><img style='margin-bottom: -3px; margin-left: 3px' title='" . _('View Rubric') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/rubric.png'/></a>" ;
+															print "<a class='thickbox' href='" . $_SESSION[$guid]["absoluteURL"] . "/fullscreen.php?q=/modules/CFA/cfa_write_rubric.php&gibbonRubricID=" . $gibbonRubricIDEffort[$i] . "&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=" . $columnID[$i] . "&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&mark=FALSE&type=effort&width=1100&height=550'><img style='margin-bottom: -3px; margin-left: 3px' title='" . _('View Rubric') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/rubric.png'/></a>" ;
 														}
 														if ($effortID[$i]!="") {
 															print "</div>" ;

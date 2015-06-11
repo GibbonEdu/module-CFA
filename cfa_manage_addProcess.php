@@ -51,7 +51,10 @@ else {
 	else {
 		//Proceed!
 		//Validate Inputs
-		$gibbonCourseClassIDMulti=$_POST["gibbonCourseClassIDMulti"] ;
+		$gibbonCourseClassIDMulti=NULL ;
+		if (isset($_POST["gibbonCourseClassIDMulti"])) {
+			$gibbonCourseClassIDMulti=$_POST["gibbonCourseClassIDMulti"] ;
+		}
 		$name=$_POST["name"] ;
 		$description=$_POST["description"] ;
 		//Sort out attainment
@@ -167,7 +170,7 @@ else {
 			$attachment="" ;
 		}
 		
-		if (count($gibbonCourseClassIDMulti)<1 OR is_numeric($groupingID)==FALSE or $groupingID<1 OR $name=="" OR $description=="") {
+		if (is_array($gibbonCourseClassIDMulti)==FALSE OR is_numeric($groupingID)==FALSE or $groupingID<1 OR $name=="" OR $description=="") {
 			//Fail 3
 			$URL.="&addReturn=fail3" ;
 			header("Location: {$URL}");

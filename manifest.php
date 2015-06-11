@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //Basica variables
 $name="CFA" ;
 $description="The CFA module allows schools to run a program of Common Formative Assessments." ;
-$entryURL="cfa_view.php" ;
+$entryURL="cfa_write.php" ;
 $type="Additional" ;
 $category="Assess" ;
 $version="1.0.00" ;
@@ -115,4 +115,52 @@ $actionRows[2]["categoryPermissionStaff"]="Y" ;
 $actionRows[2]["categoryPermissionStudent"]="N" ;
 $actionRows[2]["categoryPermissionParent"]="N" ;
 $actionRows[2]["categoryPermissionOther"]="N" ;
+
+$actionRows[3]["name"]="View CFAs_mine" ;
+$actionRows[3]["precedence"]="0";
+$actionRows[3]["category"]="View" ;
+$actionRows[3]["description"]="Allows students to view their own CFA results." ;
+$actionRows[3]["URLList"]="cfa_view.php" ;
+$actionRows[3]["entryURL"]="cfa_view.php" ;
+$actionRows[3]["defaultPermissionAdmin"]="N" ;
+$actionRows[3]["defaultPermissionTeacher"]="N" ;
+$actionRows[3]["defaultPermissionStudent"]="Y" ;
+$actionRows[3]["defaultPermissionParent"]="N" ;
+$actionRows[3]["defaultPermissionSupport"]="N" ;
+$actionRows[3]["categoryPermissionStaff"]="N" ;
+$actionRows[3]["categoryPermissionStudent"]="Y" ;
+$actionRows[3]["categoryPermissionParent"]="N" ;
+$actionRows[3]["categoryPermissionOther"]="N" ;
+
+$actionRows[4]["name"]="View CFAs_myChildrens" ;
+$actionRows[4]["precedence"]="1";
+$actionRows[4]["category"]="View" ;
+$actionRows[4]["description"]="Allows parents to view their childrens' CFA results." ;
+$actionRows[4]["URLList"]="cfa_view.php" ;
+$actionRows[4]["entryURL"]="cfa_view.php" ;
+$actionRows[4]["defaultPermissionAdmin"]="N" ;
+$actionRows[4]["defaultPermissionTeacher"]="N" ;
+$actionRows[4]["defaultPermissionStudent"]="N" ;
+$actionRows[4]["defaultPermissionParent"]="Y" ;
+$actionRows[4]["defaultPermissionSupport"]="N" ;
+$actionRows[4]["categoryPermissionStaff"]="N" ;
+$actionRows[4]["categoryPermissionStudent"]="N" ;
+$actionRows[4]["categoryPermissionParent"]="Y" ;
+$actionRows[4]["categoryPermissionOther"]="N" ;
+
+$actionRows[5]["name"]="View CFAs_all" ;
+$actionRows[5]["precedence"]="2";
+$actionRows[5]["category"]="View" ;
+$actionRows[5]["description"]="Allows staff to see CFA results for all children." ;
+$actionRows[5]["URLList"]="cfa_view.php" ;
+$actionRows[5]["entryURL"]="cfa_view.php" ;
+$actionRows[5]["defaultPermissionAdmin"]="Y" ;
+$actionRows[5]["defaultPermissionTeacher"]="Y" ;
+$actionRows[5]["defaultPermissionStudent"]="N" ;
+$actionRows[5]["defaultPermissionParent"]="N" ;
+$actionRows[5]["defaultPermissionSupport"]="N" ;
+$actionRows[5]["categoryPermissionStaff"]="Y" ;
+$actionRows[5]["categoryPermissionStudent"]="N" ;
+$actionRows[5]["categoryPermissionParent"]="N" ;
+$actionRows[5]["categoryPermissionOther"]="N" ;
 ?>

@@ -78,6 +78,7 @@ else {
 			}
 			else {
 				$row=$result->fetch() ;
+				$attachmentCurrent=$row["attachment"] ;
 				$name=$row["name" ] ; 
 				$count=$_POST["count"] ;
 				$partialFail=FALSE ;
@@ -273,7 +274,7 @@ else {
 					}
 				}
 				else {
-					$attachment=$row["attachment"] ;
+					$attachment=$attachmentCurrent ;
 				}
 				$completeDate=$_POST["completeDate"] ;
 				if ($completeDate=="") {
