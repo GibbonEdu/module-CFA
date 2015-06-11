@@ -22,7 +22,7 @@ include "./modules/Rubrics/moduleFunctions.php" ;
 
 @session_start() ;
 
-if (isActionAccessible($guid, $connection2, "/modules/Markbook/markbook_view.php")==FALSE) {
+if (isActionAccessible($guid, $connection2, "/modules/CFA/cfa_write.php")==FALSE) {
 	//Acess denied
 	print "<div class='error'>" ;
 		print _("Your request failed because you do not have access to this action.") ;
@@ -32,10 +32,10 @@ else {
 	//Proceed!
 	//Check if school year specified
 	$gibbonCourseClassID=$_GET["gibbonCourseClassID"] ;
-	$gibbonMarkbookColumnID=$_GET["gibbonMarkbookColumnID"] ;
+	$cfaColumnID=$_GET["cfaColumnID"] ;
 	$gibbonPersonID=$_GET["gibbonPersonID"] ;
 	$gibbonRubricID=$_GET["gibbonRubricID"] ;
-	if ($gibbonCourseClassID=="" OR $gibbonMarkbookColumnID=="" OR $gibbonPersonID=="" OR $gibbonRubricID=="") {
+	if ($gibbonCourseClassID=="" OR $cfaColumnID=="" OR $gibbonPersonID=="" OR $gibbonRubricID=="") {
 		print "<div class='error'>" ;
 			print _("You have not specified one or more required parameters.") ;
 		print "</div>" ;
@@ -78,8 +78,8 @@ else {
 		}
 		else {
 			try {
-				$data2=array("gibbonMarkbookColumnID"=>$gibbonMarkbookColumnID); 
-				$sql2="SELECT * FROM gibbonMarkbookColumn WHERE gibbonMarkbookColumnID=:gibbonMarkbookColumnID" ;
+				$data2=array("cfaColumnID"=>$cfaColumnID); 
+				$sql2="SELECT * FROM cfaColumn WHERE cfaColumnID=:cfaColumnID" ;
 				$result2=$connection2->prepare($sql2);
 				$result2->execute($data2);
 			}
@@ -142,7 +142,7 @@ else {
 								$mark=FALSE ;
 							}
 						}
-						print rubricView($guid, $connection2, $gibbonRubricID, $mark, $row4["gibbonPersonID"], "gibbonMarkbookColumn", "gibbonMarkbookColumnID", $gibbonMarkbookColumnID,  $contextDBTableGibbonRubricIDField, "name", "completeDate") ;
+						print rubricView($guid, $connection2, $gibbonRubricID, $mark, $row4["gibbonPersonID"], "cfaColumn", "cfaColumnID", $cfaColumnID,  $contextDBTableGibbonRubricIDField, "name", "completeDate") ;
 					}
 				}
 			}

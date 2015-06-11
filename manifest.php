@@ -70,9 +70,9 @@ $moduleTables[1]="CREATE TABLE `cfaEntry` (
 //Action rows
 $actionRows[0]["name"]="Manage CFAs" ;
 $actionRows[0]["precedence"]="0";
-$actionRows[0]["category"]="Manage" ;
+$actionRows[0]["category"]="Manage & Assess" ;
 $actionRows[0]["description"]="Allows privileged users to create and manage CFA columns." ;
-$actionRows[0]["URLList"]="cfa_manage.php, cfa_manage_add.php, cfa_manage_edit.php, cfa_manage_delete.php, cfa_manage_data.php" ;
+$actionRows[0]["URLList"]="cfa_manage.php, cfa_manage_add.php, cfa_manage_edit.php, cfa_manage_delete.php" ;
 $actionRows[0]["entryURL"]="cfa_manage.php" ;
 $actionRows[0]["defaultPermissionAdmin"]="Y" ;
 $actionRows[0]["defaultPermissionTeacher"]="N" ;
@@ -84,4 +84,35 @@ $actionRows[0]["categoryPermissionStudent"]="N" ;
 $actionRows[0]["categoryPermissionParent"]="N" ;
 $actionRows[0]["categoryPermissionOther"]="N" ;
 
+$actionRows[1]["name"]="Write CFAs_myClasses" ;
+$actionRows[1]["precedence"]="0";
+$actionRows[1]["category"]="Manage & Assess" ;
+$actionRows[1]["description"]="Allows teachers to enter CFA assessment data to columns in their classes." ;
+$actionRows[1]["URLList"]="cfa_write.php, cfa_write_data.php" ;
+$actionRows[1]["entryURL"]="cfa_write.php" ;
+$actionRows[1]["defaultPermissionAdmin"]="N" ;
+$actionRows[1]["defaultPermissionTeacher"]="Y" ;
+$actionRows[1]["defaultPermissionStudent"]="N" ;
+$actionRows[1]["defaultPermissionParent"]="N" ;
+$actionRows[1]["defaultPermissionSupport"]="N" ;
+$actionRows[1]["categoryPermissionStaff"]="Y" ;
+$actionRows[1]["categoryPermissionStudent"]="N" ;
+$actionRows[1]["categoryPermissionParent"]="N" ;
+$actionRows[1]["categoryPermissionOther"]="N" ;
+
+$actionRows[2]["name"]="Write CFAs_all" ;
+$actionRows[2]["precedence"]="1";
+$actionRows[2]["category"]="Manage & Assess" ;
+$actionRows[2]["description"]="Allows privileged users to enter CFA assessment data to columns in all classes." ;
+$actionRows[2]["URLList"]="cfa_write.php, cfa_write_data.php" ;
+$actionRows[2]["entryURL"]="cfa_write.php" ;
+$actionRows[2]["defaultPermissionAdmin"]="Y" ;
+$actionRows[2]["defaultPermissionTeacher"]="N" ;
+$actionRows[2]["defaultPermissionStudent"]="N" ;
+$actionRows[2]["defaultPermissionParent"]="N" ;
+$actionRows[2]["defaultPermissionSupport"]="N" ;
+$actionRows[2]["categoryPermissionStaff"]="Y" ;
+$actionRows[2]["categoryPermissionStudent"]="N" ;
+$actionRows[2]["categoryPermissionParent"]="N" ;
+$actionRows[2]["categoryPermissionOther"]="N" ;
 ?>

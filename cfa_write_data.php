@@ -28,7 +28,7 @@ $attainmentAlternativeNameAbrev=getSettingByScope($connection2, "Markbook", "att
 $effortAlternativeName=getSettingByScope($connection2, "Markbook", "effortAlternativeName") ;
 $effortAlternativeNameAbrev=getSettingByScope($connection2, "Markbook", "effortAlternativeNameAbrev") ;
 
-if (isActionAccessible($guid, $connection2, "/modules/CFA/cfa_manage_data.php")==FALSE) {
+if (isActionAccessible($guid, $connection2, "/modules/CFA/cfa_write_data.php")==FALSE) {
 	//Acess denied
 	print "<div class='error'>" ;
 		print _("You do not have access to this action.") ;
@@ -52,14 +52,14 @@ else {
 		}
 		else {
 			try {
-				if ($highestAction=="Edit Markbook_everything") {
+				if ($highestAction=="Write CFAs_all") {
 					$data=array("gibbonCourseClassID"=>$gibbonCourseClassID); 
-					$sql="SELECT gibbonCourse.nameShort AS course, gibbonCourseClass.nameShort AS class, gibbonCourseClass.gibbonCourseClassID, gibbonCourse.gibbonDepartmentID, gibbonYearGroupIDList FROM gibbonCourse, gibbonCourseClass WHERE gibbonCourse.gibbonCourseID=gibbonCourseClass.gibbonCourseID AND gibbonCourseClass.gibbonCourseClassID=:gibbonCourseClassID ORDER BY course, class" ;
+					$sql="SELECT gibbonCourse.nameShort AS course, gibbonCourse.name AS courseName, gibbonCourseClass.nameShort AS class, gibbonYearGroupIDList FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourse.gibbonCourseID=gibbonCourseClass.gibbonCourseID) WHERE gibbonCourseClassID=:gibbonCourseClassID" ;
 				}
 				else {
-					$data=array("gibbonPersonID"=>$_SESSION[$guid]["gibbonPersonID"], "gibbonCourseClassID"=>$gibbonCourseClassID); 
-					$sql="SELECT gibbonCourse.nameShort AS course, gibbonCourseClass.nameShort AS class, gibbonCourseClass.gibbonCourseClassID, gibbonCourse.gibbonDepartmentID, gibbonYearGroupIDList FROM gibbonCourse, gibbonCourseClass, gibbonCourseClassPerson WHERE gibbonCourse.gibbonCourseID=gibbonCourseClass.gibbonCourseID AND gibbonCourseClass.gibbonCourseClassID=gibbonCourseClassPerson.gibbonCourseClassID AND gibbonCourseClassPerson.gibbonPersonID=:gibbonPersonID AND role='Teacher' AND gibbonCourseClass.gibbonCourseClassID=:gibbonCourseClassID ORDER BY course, class" ;
-				}	
+					$data=array("gibbonCourseClassID"=>$gibbonCourseClassID, "gibbonPersonID"=>$_SESSION[$guid]["gibbonPersonID"]); 
+					$sql="SELECT gibbonCourse.nameShort AS course, gibbonCourse.name AS courseName, gibbonCourseClass.nameShort AS class, gibbonYearGroupIDList FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourse.gibbonCourseID=gibbonCourseClass.gibbonCourseID) JOIN gibbonCourseClassPerson ON (gibbonCourseClassPerson.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) WHERE gibbonCourseClass.gibbonCourseClassID=:gibbonCourseClassID AND gibbonPersonID=:gibbonPersonID AND role='Teacher'" ;
+				}
 				$result=$connection2->prepare($sql);
 				$result->execute($data);
 			}
@@ -94,7 +94,7 @@ else {
 					$row2=$result2->fetch() ;
 				
 					print "<div class='trail'>" ;
-					print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/cfa_view.php&gibbonCourseClassID=" . $_GET["gibbonCourseClassID"] . "'>" . _('View') . " " . $row["course"] . "." . $row["class"] . " " . _('Markbook') . "</a> > </div><div class='trailEnd'>" . _('Enter Marks') . "</div>" ;
+					print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/cfa_view.php&gibbonCourseClassID=" . $_GET["gibbonCourseClassID"] . "'>" . _('Write') . " " . $row["course"] . "." . $row["class"] . " " . _('CFAs') . "</a> > </div><div class='trailEnd'>" . _('Enter Assessment Results') . "</div>" ;
 					print "</div>" ;
 				
 					if (isset($_GET["updateReturn"])) { $updateReturn=$_GET["updateReturn"] ; } else { $updateReturn="" ; }
@@ -125,21 +125,6 @@ else {
 						print "</div>" ;
 					} 
 				
-					//Setup for WP Comment Push
-					$wordpressCommentPush=getSettingByScope( $connection2, "Markbook", "wordpressCommentPush" ) ;
-					if ($wordpressCommentPush=="On") {
-						print "<div class='warning'>" ;
-							print _("WordPress Comment Push is enabled: this feature allows you to push comments to student work submitted using a WordPress site. If you wish to push a comment, just select the checkbox next to the submitted work.") ;
-						print "</div>" ;
-					}
-				
-					print "<div class='linkTop'>" ;
-					if ($row2["gibbonPlannerEntryID"]!="") {
-						print "<a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/Planner/planner_view_full.php&viewBy=class&gibbonCourseClassID=$gibbonCourseClassID&gibbonPlannerEntryID=" . $row2["gibbonPlannerEntryID"] . "'>" . _('View Linked Lesson') . "<img style='margin: 0 0 -4px 5px' title='" . _('View Linked Lesson') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/planner.png'/></a> | " ;
-					}
-					print "<a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . $_SESSION[$guid]["module"] . "/cfa_manage_edit.php&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID'>" . _('Edit') . "<img style='margin: 0 0 -4px 5px' title='" . _('Edit') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/config.png'/></a> " ;
-					print "</div>" ;
-			
 					$columns=1 ;
 				
 					//Get list of acceptable file extensions
@@ -154,41 +139,95 @@ else {
 					while ($rowExt=$resultExt->fetch()) {
 						$ext=$ext . "'." . $rowExt["extension"] . "'," ;
 					}
+					
+					
+					for ($i=0;$i<$columns;$i++) {
+						//Column count
+						$span=2 ;
+						if ($row2["attainment"]=="Y") {
+							$span++ ;
+						}
+						if ($row2["effort"]=="Y") {
+							$span++ ;
+						}
+						if ($row2["comment"]=="Y") {
+							$span++ ;
+						}
+						if ($span==2) {
+							$span++ ;
+						}
+					}
 				
-					print "<form method='post' action='" . $_SESSION[$guid]["absoluteURL"] . "/modules/" . $_SESSION[$guid]["module"] . "/cfa_manage_dataProcess.php?gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID&address=" . $_SESSION[$guid]["address"] . "' enctype='multipart/form-data'>" ;
+					print "<form method='post' action='" . $_SESSION[$guid]["absoluteURL"] . "/modules/" . $_SESSION[$guid]["module"] . "/cfa_write_dataProcess.php?gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID&address=" . $_SESSION[$guid]["address"] . "' enctype='multipart/form-data'>" ;
 						print "<table class='smallIntBorder' cellspacing='0' style='width: 100%'>" ;
+							?>
+							<tr class='break'>
+								<?php
+								print "<td colspan=" . ($span) . ">" ;
+								?>
+									<h3><?php print _('Assessment Details') ?></h3>
+								</td>
+							</tr>
+							
+							<tr>
+								<td> 
+									<b><?php print _('Description') ?> *</b><br/>
+								</td>
+								<td class="right" colspan="<?php print $span ?>">
+									<input name="description" id="description" maxlength=1000 value="<?php print htmlPrep($row2["description"]) ?>" type="text" style="width: 300px">
+									<script type="text/javascript">
+										var description=new LiveValidation('description');
+										description.add(Validate.Presence);
+									 </script>
+								</td>
+							</tr>
+							<tr>
+								<td> 
+									<b><?php print _('Attachment') ?></b><br/>
+									<?php if ($row2["attachment"]!="") { ?>
+									<span style="font-size: 90%"><i><?php print _('Will overwrite existing attachment.') ?></i></span>
+									<?php } ?>
+								</td>
+								<td class="right" colspan="<?php print $span ?>">
+									<?php
+									if ($row2["attachment"]!="") {
+										print _("Current attachment:") . " <a href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $row2["attachment"] . "'>" . $row2["attachment"] . "</a><br/><br/>" ;
+									}
+									?>
+									<input type="file" name="file" id="file"><br/><br/>
+									<?php
+									//Get list of acceptable file extensions
+									try {
+										$dataExt=array(); 
+										$sqlExt="SELECT * FROM gibbonFileExtension" ;
+										$resultExt=$connection2->prepare($sqlExt);
+										$resultExt->execute($dataExt);
+									}
+									catch(PDOException $e) { }
+									$ext="" ;
+									while ($rowExt=$resultExt->fetch()) {
+										$ext=$ext . "'." . $rowExt["extension"] . "'," ;
+									}
+									?>
+							
+									<script type="text/javascript">
+										var file=new LiveValidation('file');
+										file.add( Validate.Inclusion, { within: [<?php print $ext ;?>], failureMessage: "Illegal file type!", partialMatch: true, caseSensitive: false } );
+									</script>
+								</td>
+							</tr>
+							<?php
+							
 							print "<tr class='head'>" ;
 								print "<th rowspan=2>" ;
 									print _("Student") ;
 								print "</th>" ;
 								
-								print "<th rowspan=2 style='width: 20px; text-align: center'>" ;
-									$title=_("Personalised target grade") ;
-								
-									//Get PAS
-									$PAS=getSettingByScope($connection2, 'System', 'primaryAssessmentScale') ;
-									try {
-										$dataPAS=array("gibbonScaleID"=>$PAS); 
-										$sqlPAS="SELECT * FROM gibbonScale WHERE gibbonScaleID=:gibbonScaleID" ;
-										$resultPAS=$connection2->prepare($sqlPAS);
-										$resultPAS->execute($dataPAS);
-									}
-									catch(PDOException $e) { }
-									if ($resultPAS->rowCount()==1) {
-										$rowPAS=$resultPAS->fetch() ;
-										$title.=" | " . $rowPAS["name"] . " Scale " ;
-									}
-								
-									print "<div style='-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -ms-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg);' title='$title'>" ;
-										print _("Target") ;
-									print "</div>" ;
-								print "</th>" ;
-							
 								$columnID=array() ;
 								$attainmentID=array() ;
 								$effortID=array() ;
 								$submission=FALSE ;
-									
+								
 								for ($i=0;$i<$columns;$i++) {
 									$columnID[$i]=$row2["cfaColumnID"];
 									$attainmentID[$i]=$row2["gibbonScaleIDAttainment"];
@@ -202,71 +241,17 @@ else {
 										$gibbonRubricIDEffort[$i]=$row["gibbonRubricIDEffort"] ;
 									}
 								
-									//WORK OUT IF THERE IS SUBMISSION
-									if (is_null($row2["gibbonPlannerEntryID"])==FALSE) {
-										try {
-											$dataSub=array("gibbonPlannerEntryID"=>$row2["gibbonPlannerEntryID"]); 
-											$sqlSub="SELECT * FROM gibbonPlannerEntry WHERE gibbonPlannerEntryID=:gibbonPlannerEntryID AND homeworkSubmission='Y'" ;
-											$resultSub=$connection2->prepare($sqlSub);
-											$resultSub->execute($dataSub);
-										}
-										catch(PDOException $e) { 
-											print "<div class='error'>" . $e->getMessage() . "</div>" ; 
-										}
-									
-										if ($resultSub->rowCount()==1) {
-											$submission=TRUE ;
-											$rowSub=$resultSub->fetch() ;
-											$homeworkDueDateTime=$rowSub["homeworkDueDateTime"] ;
-											$lessonDate[$i]=$rowSub["date"] ;
-										}
-									}
-									
-									//Column count
-									$span=2 ;
-									if ($submission==TRUE) {
-										$span++ ;
-									}
-									if ($row2["attainment"]=="Y") {
-										$span++ ;
-									}
-									if ($row2["effort"]=="Y") {
-										$span++ ;
-									}
-									if ($row2["comment"]=="Y" OR $row2["uploadedResponse"]=="Y") {
-										$span++ ;
-									}
-									if ($span==2) {
-										$span++ ;
-									}
-									
 									print "<th style='text-align: center' colspan=$span-2>" ;
 										print "<span title='" . htmlPrep($row2["description"]) . "'>" . $row2["name"] . "<br/>" ;
 										print "<span style='font-size: 90%; font-style: italic; font-weight: normal'>" ;
-										if ($row2["gibbonUnitID"]!="") {
-											try {
-												$dataUnit=array("gibbonUnitID"=>$row2["gibbonUnitID"]); 
-												$sqlUnit="SELECT * FROM gibbonUnit WHERE gibbonUnitID=:gibbonUnitID" ;
-												$resultUnit=$connection2->prepare($sqlUnit);
-												$resultUnit->execute($dataUnit);
-											}
-											catch(PDOException $e) { 
-												print "<div class='error'>" . $e->getMessage() . "</div>" ; 
-											}
-											if ($resultUnit->rowCount()==1) {
-												$rowUnit=$resultUnit->fetch() ;
-												print $rowUnit["name"] . "<br/>" ;
-											}
-										}
 										if ($row2["completeDate"]!="") {
 											print _("Marked on") . " " . dateConvertBack($guid, $row2["completeDate"]) . "<br/>" ;
 										}
 										else {
 											print _("Unmarked") . "<br/>" ;
 										}
-										print $row2["type"] ;
 										if ($row2["attachment"]!="" AND file_exists($_SESSION[$guid]["absolutePath"] . "/" . $row2["attachment"])) {
-											print " | <a style='color: #ffffff' 'title='" . _('Download more information') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $row2["attachment"] . "'>" . _('More info') . "</a>"; 
+											print "<a title='" . _('Download more information') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $row2["attachment"] . "'>" . _('More info') . "</a>"; 
 										}
 										print "</span><br/>" ;
 									print "</th>" ;
@@ -384,22 +369,6 @@ else {
 											print "<div style='padding: 2px 0px'>" . ($count) . ") <b><a href='index.php?q=/modules/Students/student_view_details.php&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&subpage=Markbook#" . $gibbonCourseClassID . "'>" . formatName("", $rowStudents["preferredName"], $rowStudents["surname"], "Student", true) . "</a><br/></div>" ;
 										print "</td>" ;
 										
-										print "<td style='text-align: center'>" ;
-											try {
-												$dataEntry=array("gibbonPersonIDStudent"=>$rowStudents["gibbonPersonID"], "gibbonCourseClassID"=>$gibbonCourseClassID); 
-												$sqlEntry="SELECT * FROM cfaTarget JOIN gibbonScaleGrade ON (cfaTarget.gibbonScaleGradeID=gibbonScaleGrade.gibbonScaleGradeID) WHERE gibbonPersonIDStudent=:gibbonPersonIDStudent AND gibbonCourseClassID=:gibbonCourseClassID" ;
-												$resultEntry=$connection2->prepare($sqlEntry);
-												$resultEntry->execute($dataEntry);
-											}
-											catch(PDOException $e) { 
-												print "<div class='error'>" . $e->getMessage() . "</div>" ; 
-											}
-											if ($resultEntry->rowCount()>=1) {
-												$rowEntry=$resultEntry->fetch() ;
-												print _($rowEntry["value"]) ;
-											}	
-										print "</td>" ;
-									
 										for ($i=0;$i<$columns;$i++) {
 											$row=$result->fetch() ;
 										
@@ -455,13 +424,6 @@ else {
 														}
 														else if ($rowWork["type"]=="Link") {
 															print "<span title='" . $rowWork["version"] . ". $status. " . _('Submitted at') . " " . substr($rowWork["timestamp"],11,5) . " " . _('on') . " " . dateConvertBack($guid, substr($rowWork["timestamp"],0,10)) . "' $style><a target='_blank' href='" . $rowWork["location"] ."'>$linkText</a></span>" ;
-															if ($wordpressCommentPush=="On") {
-																print "<div id='wordpressCommentPush$count' style='float: right'>" ;
-																print "</div>" ;
-																print "<script type=\"text/javascript\">" ;
-																	print "$(\"#wordpressCommentPush$count\").load(\"" . $_SESSION[$guid]["absoluteURL"] . "/modules/CFA/cfa_manage_dataAjax.php\", { location: \"" . $rowWork["location"] . "\", count: \"" . $count . "\" } );" ;
-																print "</script>" ;
-															}
 														}
 														else {
 															print "<span title='$status. " . _('Recorded at') . " " . substr($rowWork["timestamp"],11,5) . " " . _('on') . " " . dateConvertBack($guid, substr($rowWork["timestamp"],0,10)) . "' $style>$linkText</span>" ;
@@ -514,7 +476,7 @@ else {
 													}
 													print "<div style='height: 20px'>" ;
 														if ($row2["gibbonRubricIDAttainment"]!="") {
-															print "<a class='thickbox' href='" . $_SESSION[$guid]["absoluteURL"] . "/fullscreen.php?q=/modules/" . $_SESSION[$guid]["module"] . "/cfa_view_rubric.php&gibbonRubricID=" . $row2["gibbonRubricIDAttainment"] . "&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&type=attainment&width=1100&height=550'><img style='margin-top: 3px' title='" . _('Mark Rubric') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/rubric.png'/></a>" ;
+															print "<a class='thickbox' href='" . $_SESSION[$guid]["absoluteURL"] . "/fullscreen.php?q=/modules/" . $_SESSION[$guid]["module"] . "/cfa_write_rubric.php&gibbonRubricID=" . $row2["gibbonRubricIDAttainment"] . "&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&type=attainment&width=1100&height=550'><img style='margin-top: 3px' title='" . _('Mark Rubric') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/rubric.png'/></a>" ;
 														}
 													print "</div>" ;
 												print "</td>" ;
@@ -545,7 +507,7 @@ else {
 													}
 													print "<div style='height: 20px'>" ;
 														if ($row2["gibbonRubricIDEffort"]!="") {
-															print "<a class='thickbox' href='" . $_SESSION[$guid]["absoluteURL"] . "/fullscreen.php?q=/modules/" . $_SESSION[$guid]["module"] . "/cfa_view_rubric.php&gibbonRubricID=" . $row2["gibbonRubricIDEffort"] . "&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&type=effort&width=1100&height=550'><img style='margin-top: 3px' title='" . _('Mark Rubric') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/rubric.png'/></a>" ;
+															print "<a class='thickbox' href='" . $_SESSION[$guid]["absoluteURL"] . "/fullscreen.php?q=/modules/" . $_SESSION[$guid]["module"] . "/cfa_write_rubric.php&gibbonRubricID=" . $row2["gibbonRubricIDEffort"] . "&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&type=effort&width=1100&height=550'><img style='margin-top: 3px' title='" . _('Mark Rubric') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/rubric.png'/></a>" ;
 														}
 													print "</div>" ;
 												print "</td>" ;
@@ -560,24 +522,6 @@ else {
 														print "</script>" ;
 												
 														print "<textarea name='comment" . $count . "' id='comment" . $count . "' rows=6 style='width: 330px'>" . $rowEntry["comment"] . "</textarea>" ;
-														if ($row2["uploadedResponse"]=="Y") {
-															print "<br/>" ;
-														}
-													}
-													if ($row2["uploadedResponse"]=="Y") {
-														if ($rowEntry["response"]!="") {
-															print "<input type='hidden' name='response$count' id='response$count' value='" . $rowEntry["response"] . "'>" ;														
-															print "<div style='width: 330px; float: right'><a target='_blank' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowEntry["response"] . "'>" . _('Uploaded Response') . "</a> <a href='" . $_SESSION[$guid]["absoluteURL"] . "/modules/CFA/cfa_manage_data_responseDeleteProcess.php?gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "' onclick='return confirm(\"" . _('Are you sure you want to delete this record? Unsaved changes will be lost.') . "\")'><img style='margin-bottom: -8px' id='image_75_delete' title='" . _('Delete') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/garbage.png'/></a><br/></div>" ;
-														}
-														else {
-															print "<input style='margin-top: 5px' type='file' name='response$count' id='response$count'>" ;														
-															?>
-															<script type="text/javascript">
-																var <?php print "response$count" ?>=new LiveValidation('<?php print "response$count" ?>');
-																<?php print "response$count" ?>.add( Validate.Inclusion, { within: [<?php print $ext ;?>], failureMessage: "Illegal file type!", partialMatch: true, caseSensitive: false } );
-															</script>
-															<?php
-														}
 													}
 												print "</td>" ;
 											}
@@ -634,7 +578,7 @@ else {
 		}
 	
 		//Print sidebar
-		$_SESSION[$guid]["sidebarExtra"]=sidebarExtra($guid, $connection2, $gibbonCourseClassID) ;
+		$_SESSION[$guid]["sidebarExtra"]=sidebarExtra($guid, $connection2, $gibbonCourseClassID, "write") ;
 	}
 }
 ?>

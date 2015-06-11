@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-function sidebarExtra($guid, $connection2, $gibbonCourseClassID) {
+function sidebarExtra($guid, $connection2, $gibbonCourseClassID, $mode="manage") {
 	$output="" ;
 	
 	$output.="<h2>" ;
@@ -30,7 +30,12 @@ function sidebarExtra($guid, $connection2, $gibbonCourseClassID) {
 		$output.="<table class='smallIntBorder' cellspacing='0' style='width: 100%; margin: 0px 0px'>" ;	
 			$output.="<tr>" ;
 				$output.="<td style='width: 190px'>" ; 
-					$output.="<input name='q' id='q' type='hidden' value='/modules/CFA/cfa_manage.php'>" ;
+					if ($mode=="write") {
+						$output.="<input name='q' id='q' type='hidden' value='/modules/CFA/cfa_write.php'>" ;
+					}
+					else { 
+						$output.="<input name='q' id='q' type='hidden' value='/modules/CFA/cfa_manage.php'>" ;
+					}
 					$output.="<select name='gibbonCourseClassID' id='gibbonCourseClassID' style='width:161px'>" ;
 						$output.="<option value=''></option>" ;
 							try {

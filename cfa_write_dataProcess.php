@@ -37,11 +37,9 @@ date_default_timezone_set($_SESSION[$guid]["timezone"]);
 
 $gibbonCourseClassID=$_GET["gibbonCourseClassID"] ;
 $cfaColumnID=$_GET["cfaColumnID"] ;
-$URL=$_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["address"]) . "/cfa_manage_data.php&cfaColumnID=$cfaColumnID&gibbonCourseClassID=$gibbonCourseClassID" ;
+$URL=$_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["address"]) . "/cfa_write_data.php&cfaColumnID=$cfaColumnID&gibbonCourseClassID=$gibbonCourseClassID" ;
 
-$personalisedWarnings=getSettingByScope( $connection2, "Markbook", "personalisedWarnings" ) ;
-
-if (isActionAccessible($guid, $connection2, "/modules/CFA/cfa_manage_data.php")==FALSE) {
+if (isActionAccessible($guid, $connection2, "/modules/CFA/cfa_write_data.php")==FALSE) {
 	//Fail 0
 	$URL.="&updateReturn=fail0" ;
 	header("Location: {$URL}");
@@ -88,7 +86,6 @@ else {
 				$effort=$row["effort"] ;
 				$gibbonScaleIDEffort=$row["gibbonScaleIDEffort"] ;
 				$comment=$row["comment"] ;
-				$uploadedResponse=$row["uploadedResponse"] ;
 				
 				for ($i=1;$i<=$count;$i++) {
 					$gibbonPersonIDStudent=$_POST["$i-gibbonPersonID"] ;
@@ -128,68 +125,33 @@ else {
 					
 					//SET AND CALCULATE FOR ATTAINMENT
 					if ($attainment=="Y" AND $gibbonScaleIDAttainment!="") {
-						//Check for target grade
-						try {
-							$dataTarget=array("gibbonCourseClassID"=>$gibbonCourseClassID, "gibbonPersonIDStudent"=>$gibbonPersonIDStudent); 
-							$sqlTarget="SELECT * FROM cfaTarget JOIN gibbonScaleGrade ON (cfaTarget.gibbonScaleGradeID=gibbonScaleGrade.gibbonScaleGradeID) WHERE gibbonCourseClassID=:gibbonCourseClassID AND gibbonPersonIDStudent=:gibbonPersonIDStudent" ;
-							$resultTarget=$connection2->prepare($sqlTarget);
-							$resultTarget->execute($dataTarget);
-						}
-						catch(PDOException $e) { 
-							$partialFail=TRUE ;
-						}
-						//With personal warnings
-						if ($personalisedWarnings=="Y" AND $resultTarget->rowCount()==1 AND $attainmentValue!="") {
-							$attainmentConcern="N" ;
-							$attainmentDescriptor="" ;
-							$rowTarget=$resultTarget->fetch() ;
-							//Test against target grade and set values accordingly	
-							//On target
-							if ($rowTarget["value"]==$attainmentValue) {
-								$attainmentConcern="N" ;
-								$attainmentDescriptor="Attainment is on personalised target" ;
+						//Without personal warnings
+						$attainmentConcern="N" ;
+						$attainmentDescriptor="" ;
+						if ($attainmentValue!="") {
+							$lowestAcceptableAttainment=$_POST["lowestAcceptableAttainment"] ;
+							$scaleAttainment=$_POST["scaleAttainment"] ;
+							try {
+								$dataScale=array("attainmentValue"=>$attainmentValue, "scaleAttainment"=>$scaleAttainment); 
+								$sqlScale="SELECT * FROM gibbonScaleGrade JOIN gibbonScale ON (gibbonScaleGrade.gibbonScaleID=gibbonScale.gibbonScaleID) WHERE value=:attainmentValue AND gibbonScaleGrade.gibbonScaleID=:scaleAttainment" ;
+								$resultScale=$connection2->prepare($sqlScale);
+								$resultScale->execute($dataScale);
 							}
-							//Below target
-							else if ($rowTarget["value"]>$attainmentValue) {
-								$attainmentConcern="Y" ;
-								$attainmentDescriptor="Attainment is below personalised target of " . $rowTarget["value"] ;
+							catch(PDOException $e) { 
+								$partialFail=TRUE ;
 							}
-							//Above target
-							else if ($rowTarget["value"]<$attainmentValue) {
-								$attainmentConcern="P" ;
-								$attainmentDescriptor="Attainment is above personalised target of " . $rowTarget["value"] ;
+							if ($resultScale->rowCount()!=1) {
+								$partialFail=TRUE ;
+							}
+							else {
+								$rowScale=$resultScale->fetch() ;
+								$sequence=$rowScale["sequenceNumber"] ;
+								$attainmentDescriptor=$rowScale["descriptor"] ;
 							}
 					
-						}
-						//Without personal warnings
-						else {
-							$attainmentConcern="N" ;
-							$attainmentDescriptor="" ;
-							if ($attainmentValue!="") {
-								$lowestAcceptableAttainment=$_POST["lowestAcceptableAttainment"] ;
-								$scaleAttainment=$_POST["scaleAttainment"] ;
-								try {
-									$dataScale=array("attainmentValue"=>$attainmentValue, "scaleAttainment"=>$scaleAttainment); 
-									$sqlScale="SELECT * FROM gibbonScaleGrade JOIN gibbonScale ON (gibbonScaleGrade.gibbonScaleID=gibbonScale.gibbonScaleID) WHERE value=:attainmentValue AND gibbonScaleGrade.gibbonScaleID=:scaleAttainment" ;
-									$resultScale=$connection2->prepare($sqlScale);
-									$resultScale->execute($dataScale);
-								}
-								catch(PDOException $e) { 
-									$partialFail=TRUE ;
-								}
-								if ($resultScale->rowCount()!=1) {
-									$partialFail=TRUE ;
-								}
-								else {
-									$rowScale=$resultScale->fetch() ;
-									$sequence=$rowScale["sequenceNumber"] ;
-									$attainmentDescriptor=$rowScale["descriptor"] ;
-								}
-						
-								if ($lowestAcceptableAttainment!="" AND $sequence!="" AND $attainmentValue!="") {
-									if ($sequence>$lowestAcceptableAttainment) {
-										$attainmentConcern="Y" ;
-									}
+							if ($lowestAcceptableAttainment!="" AND $sequence!="" AND $attainmentValue!="") {
+								if ($sequence>$lowestAcceptableAttainment) {
+									$attainmentConcern="Y" ;
 								}
 							}
 						}
@@ -229,39 +191,6 @@ else {
 					}
 					
 					$time=time() ;
-					//Move attached file, if there is one
-					if ($uploadedResponse=="Y") {
-						if (@$_FILES["response$i"]["tmp_name"]!="") {
-							//Check for folder in uploads based on today's date
-							$path=$_SESSION[$guid]["absolutePath"] ;
-							if (is_dir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time))==FALSE) {
-								mkdir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time), 0777, TRUE) ;
-							}
-							$unique=FALSE;
-							$count=0 ;
-							while ($unique==FALSE AND $count<100) {
-								$suffix=randomPassword(16) ;
-								$attachment="uploads/" . date("Y", $time) . "/" . date("m", $time) . "/" . preg_replace("/[^a-zA-Z0-9]/", "", $name) . "_Uploaded Response_$suffix" . strrchr($_FILES["response$i"]["name"], ".") ;
-								if (!(file_exists($path . "/" . $attachment))) {
-									$unique=TRUE ;
-								}
-								$count++ ;
-							}
-						
-							if (!(move_uploaded_file($_FILES["response$i"]["tmp_name"],$path . "/" . $attachment))) {
-								$partialFail=TRUE ;
-							}
-						}
-						else {
-							$attachment=NULL ;
-							if (isset($_POST["response$i"])) {
-								$attachment=$_POST["response$i"] ;
-							}
-						}
-					}
-					else {
-						$attachment=NULL ;
-					}
 					
 					$selectFail=false ;
 					try {
@@ -277,8 +206,8 @@ else {
 					if (!($selectFail)) {
 						if ($result->rowCount()<1) {
 							try {
-								$data=array("cfaColumnID"=>$cfaColumnID, "gibbonPersonIDStudent"=>$gibbonPersonIDStudent, "attainmentValue"=>$attainmentValue, "attainmentDescriptor"=>$attainmentDescriptor, "attainmentConcern"=>$attainmentConcern, "effortValue"=>$effortValue, "effortDescriptor"=>$effortDescriptor, "effortConcern"=>$effortConcern, "comment"=>$commentValue, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit, "attachment"=>$attachment); 
-								$sql="INSERT INTO cfaEntry SET cfaColumnID=:cfaColumnID, gibbonPersonIDStudent=:gibbonPersonIDStudent, attainmentValue=:attainmentValue, attainmentDescriptor=:attainmentDescriptor, attainmentConcern=:attainmentConcern, effortValue=:effortValue, effortDescriptor=:effortDescriptor, effortConcern=:effortConcern, comment=:comment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit, response=:attachment" ;
+								$data=array("cfaColumnID"=>$cfaColumnID, "gibbonPersonIDStudent"=>$gibbonPersonIDStudent, "attainmentValue"=>$attainmentValue, "attainmentDescriptor"=>$attainmentDescriptor, "attainmentConcern"=>$attainmentConcern, "effortValue"=>$effortValue, "effortDescriptor"=>$effortDescriptor, "effortConcern"=>$effortConcern, "comment"=>$commentValue, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit); 
+								$sql="INSERT INTO cfaEntry SET cfaColumnID=:cfaColumnID, gibbonPersonIDStudent=:gibbonPersonIDStudent, attainmentValue=:attainmentValue, attainmentDescriptor=:attainmentDescriptor, attainmentConcern=:attainmentConcern, effortValue=:effortValue, effortDescriptor=:effortDescriptor, effortConcern=:effortConcern, comment=:comment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit" ;
 								$result=$connection2->prepare($sql);
 								$result->execute($data);
 							}
@@ -290,8 +219,8 @@ else {
 							$row=$result->fetch() ;
 							//Update
 							try {
-								$data=array("cfaColumnID"=>$cfaColumnID, "gibbonPersonIDStudent"=>$gibbonPersonIDStudent, "attainmentValue"=>$attainmentValue, "attainmentDescriptor"=>$attainmentDescriptor, "attainmentConcern"=>$attainmentConcern, "effortValue"=>$effortValue, "effortDescriptor"=>$effortDescriptor, "effortConcern"=>$effortConcern, "comment"=>$commentValue, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit, "attachment"=>$attachment, "cfaEntryID"=>$row["cfaEntryID"]); 
-								$sql="UPDATE cfaEntry SET cfaColumnID=:cfaColumnID, gibbonPersonIDStudent=:gibbonPersonIDStudent, attainmentValue=:attainmentValue, attainmentDescriptor=:attainmentDescriptor, attainmentConcern=:attainmentConcern, effortValue=:effortValue, effortDescriptor=:effortDescriptor, effortConcern=:effortConcern, comment=:comment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit, response=:attachment WHERE cfaEntryID=:cfaEntryID" ;
+								$data=array("cfaColumnID"=>$cfaColumnID, "gibbonPersonIDStudent"=>$gibbonPersonIDStudent, "attainmentValue"=>$attainmentValue, "attainmentDescriptor"=>$attainmentDescriptor, "attainmentConcern"=>$attainmentConcern, "effortValue"=>$effortValue, "effortDescriptor"=>$effortDescriptor, "effortConcern"=>$effortConcern, "comment"=>$commentValue, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit, "cfaEntryID"=>$row["cfaEntryID"]); 
+								$sql="UPDATE cfaEntry SET cfaColumnID=:cfaColumnID, gibbonPersonIDStudent=:gibbonPersonIDStudent, attainmentValue=:attainmentValue, attainmentDescriptor=:attainmentDescriptor, attainmentConcern=:attainmentConcern, effortValue=:effortValue, effortDescriptor=:effortDescriptor, effortConcern=:effortConcern, comment=:comment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit WHERE cfaEntryID=:cfaEntryID" ;
 								$result=$connection2->prepare($sql);
 								$result->execute($data);
 							}
@@ -317,6 +246,35 @@ else {
 				}
 				
 				//Update column
+				$description=$_POST["description"] ;
+				$time=time() ;
+				//Move attached file, if there is one
+				if ($_FILES['file']["tmp_name"]!="") {
+					//Check for folder in uploads based on today's date
+					$path=$_SESSION[$guid]["absolutePath"] ;
+					if (is_dir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time))==FALSE) {
+						mkdir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time), 0777, TRUE) ;
+					}
+					$unique=FALSE;
+					$count=0 ;
+					while ($unique==FALSE AND $count<100) {
+						$suffix=randomPassword(16) ;
+						$attachment="uploads/" . date("Y", $time) . "/" . date("m", $time) . "/" . preg_replace("/[^a-zA-Z0-9]/", "", $name) . "_$suffix" . strrchr($_FILES["file"]["name"], ".") ;
+						if (!(file_exists($path . "/" . $attachment))) {
+							$unique=TRUE ;
+						}
+						$count++ ;
+					}
+				
+					if (!(move_uploaded_file($_FILES["file"]["tmp_name"],$path . "/" . $attachment))) {
+						//Fail 5
+						$URL.="&updateReturn=fail5" ;
+						header("Location: {$URL}");
+					}
+				}
+				else {
+					$attachment=$row["attachment"] ;
+				}
 				$completeDate=$_POST["completeDate"] ;
 				if ($completeDate=="") {
 					$completeDate=NULL ;
@@ -327,8 +285,8 @@ else {
 					$complete="Y" ;
 				}
 				try {
-					$data=array("completeDate"=>$completeDate, "complete"=>$complete, "cfaColumnID"=>$cfaColumnID); 
-					$sql="UPDATE cfaColumn SET completeDate=:completeDate, complete=:complete WHERE cfaColumnID=:cfaColumnID" ;
+					$data=array("attachment"=>$attachment, "description"=>$description, "completeDate"=>$completeDate, "complete"=>$complete, "cfaColumnID"=>$cfaColumnID); 
+					$sql="UPDATE cfaColumn SET attachment=:attachment, description=:description, completeDate=:completeDate, complete=:complete WHERE cfaColumnID=:cfaColumnID" ;
 					$result=$connection2->prepare($sql);
 					$result->execute($data);
 				}
