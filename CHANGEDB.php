@@ -16,4 +16,8 @@ ALTER TABLE `cfaEntry` ADD `response` TEXT NOT NULL AFTER `comment`;end
 ALTER TABLE `cfaEntry` CHANGE `response` `response` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;end
 " ;
 
+//v1.1.01
+$sql[$count][0]="1.1.01" ;
+$sql[$count][1]="" ;
+
 ?>

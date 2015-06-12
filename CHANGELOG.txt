@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+v1.1.01
+-------
+Fixed manifest issue
+
 v1.1.00
 -------
 Added in Uploaded Response field (same as Markbook)
