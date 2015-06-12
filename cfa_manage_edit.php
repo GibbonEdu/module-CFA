@@ -467,6 +467,15 @@ else {
 									<input <?php if ($row2["comment"]=="N") { print "checked" ; } ?> type="radio" name="comment" value="N" class="comment" /> <?php print _('No') ?>
 								</td>
 							</tr>
+							<tr>
+								<td> 
+									<b><?php print _('Include Uploaded Response?') ?> *</b><br/>
+								</td>
+								<td class="right">
+									<input <?php if ($row2["uploadedResponse"]=="Y") { print "checked" ; } ?> type="radio" name="uploadedResponse" value="Y" class="uploadedResponse" /> <?php print _('Yes') ?>
+									<input <?php if ($row2["uploadedResponse"]=="N") { print "checked" ; } ?> type="radio" name="uploadedResponse" value="N" class="uploadedResponse" /> <?php print _('No') ?>
+								</td>
+							</tr>
 							
 							<tr class='break'>
 								<td colspan=2> 

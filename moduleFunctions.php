@@ -46,11 +46,8 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 		$output.="</div>" ;
 	}
 	else {
+		$results=FALSE ;
 		while ($rowYears=$resultYears->fetch()) {
-			$output.="<h4>" ;
-				$output.=$rowYears["name"] ;
-			$output.="</h4>" ;
-			
 			//Get and output CFAs
 			try {
 				$dataCFA=array("gibbonPersonID1"=>$gibbonPersonID, "gibbonPersonID2"=>$gibbonPersonID, "gibbonSchoolYearID"=>$rowYears["gibbonSchoolYearID"]); 
@@ -62,12 +59,11 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 				$output.="<div class='error'>" . $e->getMessage() . "</div>" ; 
 			}
 			
-			if ($resultCFA->rowCount()<1) {
-				$output.="<div class='error'>" ;
-					$output.=_("There are no records to display.") ;
-				$output.="</div>" ;
-			}
-			else {
+			if ($resultCFA->rowCount()>0) {
+				$results=TRUE ;
+				$output.="<h4>" ;
+					$output.=$rowYears["name"] ;
+				$output.="</h4>" ;
 				$output.="<table cellspacing='0' style='width: 100%'>" ;
 					$output.="<tr class='head'>" ;
 						$output.="<th style='width: 120px'>" ;
@@ -188,14 +184,20 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 									}
 								$output.="</td>" ;
 							}
-							if ($rowCFA["comment"]=="N") {
-								$output.="<td class='dull' style='color: #bbb; text-align: left'>" ;
-									$output.=_('N/A') ;
-								$output.="</td>" ;
+							
+							if ($rowCFA["comment"]=="N" AND $rowCFA["uploadedResponse"]=="N") {
+								print "<td class='dull' style='color: #bbb; text-align: left'>" ;
+									print _('N/A') ;
+								print "</td>" ;
 							}
 							else {
 								$output.="<td>" ;
-									$output.=$rowCFA["comment"] ;
+									if ($rowCFA["comment"]!="") {
+										$output.=$rowCFA["comment"] . "<br/>" ;
+									}
+									if ($rowCFA["response"]!="") {
+										$output.="<a title='" . _('Uploaded Response') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowCFA["response"] . "'>" . _('Uploaded Response') . "</a><br/>" ;
+									}
 								$output.="</td>" ;
 							}
 						$output.="</tr>" ;
@@ -203,6 +205,11 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 				
 				$output.="</table>" ;
 			}
+		}
+		if ($results==FALSE) {
+			$output.="<div class='error'>" ;
+				$output.=_("There are no records to display.") ;
+			$output.="</div>" ;
 		}
 	}
 	

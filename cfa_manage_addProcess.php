@@ -98,6 +98,7 @@ else {
 			}
 		}
 		$comment=$_POST["comment"] ;
+		$uploadedResponse=$_POST["uploadedResponse"] ;
 		$completeDate=$_POST["completeDate"] ;
 		if ($completeDate=="") {
 			$completeDate=NULL ;
@@ -181,8 +182,8 @@ else {
 			foreach ($gibbonCourseClassIDMulti AS $gibbonCourseClassIDSingle) {
 				//Write to database
 				try {
-					$data=array("groupingID"=>$groupingID, "gibbonCourseClassID"=>$gibbonCourseClassIDSingle, "name"=>$name, "description"=>$description, "attainment"=>$attainment, "gibbonScaleIDAttainment"=>$gibbonScaleIDAttainment, "effort"=>$effort, "gibbonScaleIDEffort"=>$gibbonScaleIDEffort, "gibbonRubricIDAttainment"=>$gibbonRubricIDAttainment, "gibbonRubricIDEffort"=>$gibbonRubricIDEffort, "comment"=>$comment, "completeDate"=>$completeDate, "complete"=>$complete, "attachment"=>$attachment, "gibbonPersonIDCreator"=>$gibbonPersonIDCreator, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit); 
-					$sql="INSERT INTO cfaColumn SET groupingID=:groupingID, gibbonCourseClassID=:gibbonCourseClassID, name=:name, description=:description, attainment=:attainment, gibbonScaleIDAttainment=:gibbonScaleIDAttainment, effort=:effort, gibbonScaleIDEffort=:gibbonScaleIDEffort, gibbonRubricIDAttainment=:gibbonRubricIDAttainment, gibbonRubricIDEffort=:gibbonRubricIDEffort, comment=:comment, completeDate=:completeDate, complete=:complete, attachment=:attachment, gibbonPersonIDCreator=:gibbonPersonIDCreator, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit" ;
+					$data=array("groupingID"=>$groupingID, "gibbonCourseClassID"=>$gibbonCourseClassIDSingle, "name"=>$name, "description"=>$description, "attainment"=>$attainment, "gibbonScaleIDAttainment"=>$gibbonScaleIDAttainment, "effort"=>$effort, "gibbonScaleIDEffort"=>$gibbonScaleIDEffort, "gibbonRubricIDAttainment"=>$gibbonRubricIDAttainment, "gibbonRubricIDEffort"=>$gibbonRubricIDEffort, "comment"=>$comment, "uploadedResponse"=>$uploadedResponse, "completeDate"=>$completeDate, "complete"=>$complete, "attachment"=>$attachment, "gibbonPersonIDCreator"=>$gibbonPersonIDCreator, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit); 
+					$sql="INSERT INTO cfaColumn SET groupingID=:groupingID, gibbonCourseClassID=:gibbonCourseClassID, name=:name, description=:description, attainment=:attainment, gibbonScaleIDAttainment=:gibbonScaleIDAttainment, effort=:effort, gibbonScaleIDEffort=:gibbonScaleIDEffort, gibbonRubricIDAttainment=:gibbonRubricIDAttainment, gibbonRubricIDEffort=:gibbonRubricIDEffort, comment=:comment, uploadedResponse=:uploadedResponse, completeDate=:completeDate, complete=:complete, attachment=:attachment, gibbonPersonIDCreator=:gibbonPersonIDCreator, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit" ;
 					$result=$connection2->prepare($sql);
 					$result->execute($data);
 				}

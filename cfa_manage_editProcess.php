@@ -122,6 +122,7 @@ else {
 					}
 				}
 				$comment=$_POST["comment"] ;
+				$uploadedResponse=$_POST["uploadedResponse"] ;
 				$completeDate=$_POST["completeDate"] ;
 				if ($completeDate=="") {
 					$completeDate=NULL ;
@@ -170,8 +171,8 @@ else {
 				else {
 					//Write to database
 					try {
-						$data=array("gibbonCourseClassID"=>$gibbonCourseClassID, "name"=>$name, "description"=>$description, "attainment"=>$attainment, "gibbonScaleIDAttainment"=>$gibbonScaleIDAttainment, "effort"=>$effort, "gibbonScaleIDEffort"=>$gibbonScaleIDEffort, "gibbonRubricIDAttainment"=>$gibbonRubricIDAttainment, "gibbonRubricIDEffort"=>$gibbonRubricIDEffort, "comment"=>$comment, "completeDate"=>$completeDate, "complete"=>$complete, "attachment"=>$attachment, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit, "cfaColumnID"=>$cfaColumnID); 
-						$sql="UPDATE cfaColumn SET gibbonCourseClassID=:gibbonCourseClassID, name=:name, description=:description, attainment=:attainment, gibbonScaleIDAttainment=:gibbonScaleIDAttainment, effort=:effort, gibbonScaleIDEffort=:gibbonScaleIDEffort, gibbonRubricIDAttainment=:gibbonRubricIDAttainment, gibbonRubricIDEffort=:gibbonRubricIDEffort, comment=:comment, completeDate=:completeDate, complete=:complete, attachment=:attachment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit WHERE cfaColumnID=:cfaColumnID" ;
+						$data=array("gibbonCourseClassID"=>$gibbonCourseClassID, "name"=>$name, "description"=>$description, "attainment"=>$attainment, "gibbonScaleIDAttainment"=>$gibbonScaleIDAttainment, "effort"=>$effort, "gibbonScaleIDEffort"=>$gibbonScaleIDEffort, "gibbonRubricIDAttainment"=>$gibbonRubricIDAttainment, "gibbonRubricIDEffort"=>$gibbonRubricIDEffort, "comment"=>$comment, "uploadedResponse"=>$uploadedResponse, "completeDate"=>$completeDate, "complete"=>$complete, "attachment"=>$attachment, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit, "cfaColumnID"=>$cfaColumnID); 
+						$sql="UPDATE cfaColumn SET gibbonCourseClassID=:gibbonCourseClassID, name=:name, description=:description, attainment=:attainment, gibbonScaleIDAttainment=:gibbonScaleIDAttainment, effort=:effort, gibbonScaleIDEffort=:gibbonScaleIDEffort, gibbonRubricIDAttainment=:gibbonRubricIDAttainment, gibbonRubricIDEffort=:gibbonRubricIDEffort, comment=:comment, uploadedResponse=:uploadedResponse, completeDate=:completeDate, complete=:complete, attachment=:attachment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit WHERE cfaColumnID=:cfaColumnID" ;
 						$result=$connection2->prepare($sql);
 						$result->execute($data);
 					}

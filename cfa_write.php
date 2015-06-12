@@ -324,6 +324,7 @@ else {
 										$gibbonRubricIDAttainment[$i]=$row["gibbonRubricIDAttainment"] ;
 										$gibbonRubricIDEffort[$i]=$row["gibbonRubricIDEffort"] ;
 										$comment[$i]=$row["comment"];
+										$uploadedResponse[$i]=$row["uploadedResponse"];
 										$submission[$i]=FALSE ;
 									}
 								
@@ -338,6 +339,9 @@ else {
 										$span++ ;
 									}
 									if ($comment[$i]=="Y") {
+										$span++ ;
+									}
+									if ($uploadedResponse[$i]=="Y") {
 										$span++ ;
 									}
 									if ($span==0) {
@@ -441,6 +445,16 @@ else {
 											}
 											print "<th style='$leftBorderStyle text-align: center; width: 80px'>" ;
 												print "<span title='" . _('Comment') . "'>" . _('Com') . "</span>" ;
+											print "</th>" ;
+										}
+										if ($uploadedResponse[$i]=="Y") {
+											$leftBorderStyle='' ;
+											if ($leftBorder==FALSE) {
+												$leftBorder=TRUE ;
+												$leftBorderStyle="border-left: 2px solid #666;" ;
+											}
+											print "<th style='$leftBorderStyle text-align: center; width: 30px'>" ;
+												print "<span title='" . _('Uploaded Response') . "'>" . _('Upl') . "</span>" ;
 											print "</th>" ;
 										}
 									}
@@ -597,6 +611,17 @@ else {
 														}
 													print "</td>" ;
 												}
+												if ($uploadedResponse[$i]=="Y") {
+													$leftBorderStyle='' ;
+													if ($leftBorder==FALSE) {
+														$leftBorder=TRUE ;
+														$leftBorderStyle="border-left: 2px solid #666;" ;
+													}
+													print "<td style='$leftBorderStyle text-align: center;'>" ;
+													if ($rowEntry["response"]!="") {
+														print "<a title='" . _('Uploaded Response') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowEntry["response"] . "'>Up</a><br/>" ;
+													}
+												}
 												print "</td>" ;
 											}
 											else {
@@ -608,6 +633,9 @@ else {
 													$emptySpan++ ;
 												}
 												if ($comment[$i]=="Y") {
+													$emptySpan++ ;
+												}
+												if ($uploadedResponse[$i]=="Y") {
 													$emptySpan++ ;
 												}
 												if ($emptySpan>0) {

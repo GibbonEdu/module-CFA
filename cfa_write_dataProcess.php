@@ -87,6 +87,7 @@ else {
 				$effort=$row["effort"] ;
 				$gibbonScaleIDEffort=$row["gibbonScaleIDEffort"] ;
 				$comment=$row["comment"] ;
+				$uploadedResponse=$row["uploadedResponse"] ;
 				
 				for ($i=1;$i<=$count;$i++) {
 					$gibbonPersonIDStudent=$_POST["$i-gibbonPersonID"] ;
@@ -192,8 +193,41 @@ else {
 					}
 					
 					$time=time() ;
+					//Move attached file, if there is one
+					if ($uploadedResponse=="Y") {
+						if (@$_FILES["response$i"]["tmp_name"]!="") {
+							//Check for folder in uploads based on today's date
+							$path=$_SESSION[$guid]["absolutePath"] ;
+							if (is_dir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time))==FALSE) {
+								mkdir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time), 0777, TRUE) ;
+							}
+							$unique=FALSE;
+							$count2=0 ;
+							while ($unique==FALSE AND $count2<100) {
+								$suffix=randomPassword(16) ;
+								$attachment="uploads/" . date("Y", $time) . "/" . date("m", $time) . "/" . preg_replace("/[^a-zA-Z0-9]/", "", $name) . "_Uploaded Response_$suffix" . strrchr($_FILES["response$i"]["name"], ".") ;
+								if (!(file_exists($path . "/" . $attachment))) {
+									$unique=TRUE ;
+								}
+								$count2++ ;
+							}
+						
+							if (!(move_uploaded_file($_FILES["response$i"]["tmp_name"],$path . "/" . $attachment))) {
+								$partialFail=TRUE ;
+							}
+						}
+						else {
+							$attachment=NULL ;
+							if (isset($_POST["response$i"])) {
+								$attachment=$_POST["response$i"] ;
+							}
+						}
+					}
+					else {
+						$attachment=NULL ;
+					}
 					
-					$selectFail=false ;
+					$selectFail=FALSE ;
 					try {
 						$data=array("cfaColumnID"=>$cfaColumnID, "gibbonPersonIDStudent"=>$gibbonPersonIDStudent); 
 						$sql="SELECT * FROM cfaEntry WHERE cfaColumnID=:cfaColumnID AND gibbonPersonIDStudent=:gibbonPersonIDStudent" ;
@@ -202,13 +236,13 @@ else {
 					}
 					catch(PDOException $e) { 
 						$partialFail=TRUE ;
-						$selectFail=true ;
+						$selectFail=TRUE ;
 					}
 					if (!($selectFail)) {
 						if ($result->rowCount()<1) {
 							try {
-								$data=array("cfaColumnID"=>$cfaColumnID, "gibbonPersonIDStudent"=>$gibbonPersonIDStudent, "attainmentValue"=>$attainmentValue, "attainmentDescriptor"=>$attainmentDescriptor, "attainmentConcern"=>$attainmentConcern, "effortValue"=>$effortValue, "effortDescriptor"=>$effortDescriptor, "effortConcern"=>$effortConcern, "comment"=>$commentValue, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit); 
-								$sql="INSERT INTO cfaEntry SET cfaColumnID=:cfaColumnID, gibbonPersonIDStudent=:gibbonPersonIDStudent, attainmentValue=:attainmentValue, attainmentDescriptor=:attainmentDescriptor, attainmentConcern=:attainmentConcern, effortValue=:effortValue, effortDescriptor=:effortDescriptor, effortConcern=:effortConcern, comment=:comment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit" ;
+								$data=array("cfaColumnID"=>$cfaColumnID, "gibbonPersonIDStudent"=>$gibbonPersonIDStudent, "attainmentValue"=>$attainmentValue, "attainmentDescriptor"=>$attainmentDescriptor, "attainmentConcern"=>$attainmentConcern, "effortValue"=>$effortValue, "effortDescriptor"=>$effortDescriptor, "effortConcern"=>$effortConcern, "comment"=>$commentValue, "attachment"=>$attachment, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit); 
+								$sql="INSERT INTO cfaEntry SET cfaColumnID=:cfaColumnID, gibbonPersonIDStudent=:gibbonPersonIDStudent, attainmentValue=:attainmentValue, attainmentDescriptor=:attainmentDescriptor, attainmentConcern=:attainmentConcern, effortValue=:effortValue, effortDescriptor=:effortDescriptor, effortConcern=:effortConcern, comment=:comment, response=:attachment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit" ;
 								$result=$connection2->prepare($sql);
 								$result->execute($data);
 							}
@@ -220,28 +254,14 @@ else {
 							$row=$result->fetch() ;
 							//Update
 							try {
-								$data=array("cfaColumnID"=>$cfaColumnID, "gibbonPersonIDStudent"=>$gibbonPersonIDStudent, "attainmentValue"=>$attainmentValue, "attainmentDescriptor"=>$attainmentDescriptor, "attainmentConcern"=>$attainmentConcern, "effortValue"=>$effortValue, "effortDescriptor"=>$effortDescriptor, "effortConcern"=>$effortConcern, "comment"=>$commentValue, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit, "cfaEntryID"=>$row["cfaEntryID"]); 
-								$sql="UPDATE cfaEntry SET cfaColumnID=:cfaColumnID, gibbonPersonIDStudent=:gibbonPersonIDStudent, attainmentValue=:attainmentValue, attainmentDescriptor=:attainmentDescriptor, attainmentConcern=:attainmentConcern, effortValue=:effortValue, effortDescriptor=:effortDescriptor, effortConcern=:effortConcern, comment=:comment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit WHERE cfaEntryID=:cfaEntryID" ;
+								$data=array("cfaColumnID"=>$cfaColumnID, "gibbonPersonIDStudent"=>$gibbonPersonIDStudent, "attainmentValue"=>$attainmentValue, "attainmentDescriptor"=>$attainmentDescriptor, "attainmentConcern"=>$attainmentConcern, "effortValue"=>$effortValue, "effortDescriptor"=>$effortDescriptor, "effortConcern"=>$effortConcern, "comment"=>$commentValue, "attachment"=>$attachment, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit, "cfaEntryID"=>$row["cfaEntryID"]); 
+								$sql="UPDATE cfaEntry SET cfaColumnID=:cfaColumnID, gibbonPersonIDStudent=:gibbonPersonIDStudent, attainmentValue=:attainmentValue, attainmentDescriptor=:attainmentDescriptor, attainmentConcern=:attainmentConcern, effortValue=:effortValue, effortDescriptor=:effortDescriptor, effortConcern=:effortConcern, comment=:comment, response=:attachment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit WHERE cfaEntryID=:cfaEntryID" ;
 								$result=$connection2->prepare($sql);
 								$result->execute($data);
 							}
 							catch(PDOException $e) { 
 								$partialFail=TRUE ;
 							}
-						}
-					}
-					
-					//Attempt WordPress Comment Push
-					if ($wordpressCommentPushAction!="" AND $wordpressCommentPushID!="") {
-						$data="comment_post_ID=" . urlencode($wordpressCommentPushID) . "&author=" . urlencode(formatName($_SESSION[$guid]["title"], $_SESSION[$guid]["preferredName"], $_SESSION[$guid]["surname"], "Staff")) . "&email=" . urlencode($_SESSION[$guid]["email"]) . "&url=" . urlencode($_SESSION[$guid]["website"]) . "&comment=" . urlencode($commentValue) ;
-						$params=array('http'=> array('method'=> 'POST','content'=> $data));
-						$ctx=stream_context_create($params);
-						$fp=@fopen($wordpressCommentPushAction, 'rb', false, $ctx);
-						if (!$fp) {
-							$partialFail=TRUE ;
-						}
-						if (@stream_get_contents($fp)===false) {
-							$partialFail=TRUE ;
 						}
 					}
 				}
@@ -257,14 +277,14 @@ else {
 						mkdir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time), 0777, TRUE) ;
 					}
 					$unique=FALSE;
-					$count=0 ;
-					while ($unique==FALSE AND $count<100) {
+					$count3=0 ;
+					while ($unique==FALSE AND $count3<100) {
 						$suffix=randomPassword(16) ;
 						$attachment="uploads/" . date("Y", $time) . "/" . date("m", $time) . "/" . preg_replace("/[^a-zA-Z0-9]/", "", $name) . "_$suffix" . strrchr($_FILES["file"]["name"], ".") ;
 						if (!(file_exists($path . "/" . $attachment))) {
 							$unique=TRUE ;
 						}
-						$count++ ;
+						$count3++ ;
 					}
 				
 					if (!(move_uploaded_file($_FILES["file"]["tmp_name"],$path . "/" . $attachment))) {

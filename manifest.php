@@ -44,6 +44,7 @@ $moduleTables[0]="CREATE TABLE `cfaColumn` (
   `gibbonRubricIDAttainment` int(8) unsigned zerofill DEFAULT NULL,
   `gibbonRubricIDEffort` int(8) unsigned zerofill DEFAULT NULL,
   `comment` enum('Y','N') NOT NULL DEFAULT 'Y',
+  `uploadedResponse` enum('N','Y') NOT NULL DEFAULT 'N',
   `complete` enum('N','Y') NOT NULL,
   `completeDate` date DEFAULT NULL,
   `gibbonPersonIDCreator` int(10) unsigned zerofill NOT NULL,
@@ -62,6 +63,7 @@ $moduleTables[1]="CREATE TABLE `cfaEntry` (
   `effortDescriptor` varchar(100) DEFAULT NULL,
   `effortConcern` enum('N','Y') DEFAULT NULL,
   `comment` text,
+  `response` text NULL DEFAULT NULL,
   `gibbonPersonIDLastEdit` int(10) unsigned zerofill NOT NULL,
    PRIMARY KEY (`cfaEntryID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;" ;

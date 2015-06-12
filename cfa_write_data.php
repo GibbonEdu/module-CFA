@@ -94,7 +94,7 @@ else {
 					$row2=$result2->fetch() ;
 				
 					print "<div class='trail'>" ;
-					print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/cfa_write.php&gibbonCourseClassID=" . $_GET["gibbonCourseClassID"] . "'>" . _('Write') . " " . $row["course"] . "." . $row["class"] . " " . _('CFAs') . "</a> > </div><div class='trailEnd'>" . _('Enter Assessment Results') . "</div>" ;
+					print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/cfa_write.php&gibbonCourseClassID=" . $_GET["gibbonCourseClassID"] . "'>" . _('Write') . " " . $row["course"] . "." . $row["class"] . " " . _('CFAs') . "</a> > </div><div class='trailEnd'>" . _('Enter CFA Results') . "</div>" ;
 					print "</div>" ;
 				
 					if (isset($_GET["updateReturn"])) { $updateReturn=$_GET["updateReturn"] ; } else { $updateReturn="" ; }
@@ -150,7 +150,7 @@ else {
 						if ($row2["effort"]=="Y") {
 							$span++ ;
 						}
-						if ($row2["comment"]=="Y") {
+						if ($row2["comment"]=="Y" OR $row2["uploadedResponse"]=="Y") {
 							$span++ ;
 						}
 						if ($span==2) {
@@ -522,6 +522,21 @@ else {
 														print "</script>" ;
 												
 														print "<textarea name='comment" . $count . "' id='comment" . $count . "' rows=6 style='width: 330px'>" . $rowEntry["comment"] . "</textarea>" ;
+													}
+													if ($row2["uploadedResponse"]=="Y") {
+														if ($rowEntry["response"]!="") {
+															print "<input type='hidden' name='response$count' id='response$count' value='" . $rowEntry["response"] . "'>" ;														
+															print "<div style='width: 330px; float: right'><a target='_blank' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowEntry["response"] . "'>" . _('Uploaded Response') . "</a> <a href='" . $_SESSION[$guid]["absoluteURL"] . "/modules/CFA/cfa_write_data_responseDeleteProcess.php?gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "' onclick='return confirm(\"" . _('Are you sure you want to delete this record? Unsaved changes will be lost.') . "\")'><img style='margin-bottom: -8px' id='image_75_delete' title='" . _('Delete') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/garbage.png'/></a><br/></div>" ;
+														}
+														else {
+															print "<input style='margin-top: 5px' type='file' name='response$count' id='response$count'>" ;														
+															?>
+															<script type="text/javascript">
+																var <?php print "response$count" ?>=new LiveValidation('<?php print "response$count" ?>');
+																<?php print "response$count" ?>.add( Validate.Inclusion, { within: [<?php print $ext ;?>], failureMessage: "Illegal file type!", partialMatch: true, caseSensitive: false } );
+															</script>
+															<?php
+														}
 													}
 												print "</td>" ;
 											}
