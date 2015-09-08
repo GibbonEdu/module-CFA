@@ -84,7 +84,7 @@ else {
 					$addReturnMessage=_("Your request failed due to an attachment error.") ;	
 				}
 				else if ($addReturn=="fail6") {
-					$updateReturnMessage=_("Your request was successful, but some data was not properly saved.") ;
+					$addReturnMessage=_("Your request was successful, but some data was not properly saved.") ;
 				}
 				else if ($addReturn=="success0") {
 					$addReturnMessage=_("Your request was completed successfully. You can now add another record if you wish.") ;	
@@ -219,7 +219,7 @@ else {
 					</tr>
 					<tr id="gibbonScaleIDAttainmentRow">
 						<td> 
-							<b><?php if ($attainmentAlternativeName!="") { print $attainmentAlternativeName . " " . _('Scale') ; } else { print _('Attainment Scale') ; } ?> *</b><br/>
+							<b><?php if ($attainmentAlternativeName!="") { print $attainmentAlternativeName . " " . _('Scale') ; } else { print _('Attainment Scale') ; } ?></b><br/>
 						</td>
 						<td class="right">
 							<select name="gibbonScaleIDAttainment" id="gibbonScaleIDAttainment" style="width: 302px">
@@ -234,7 +234,7 @@ else {
 								print "<option value=''></option>" ;
 								while ($rowSelect=$resultSelect->fetch()) {
 									$selected="" ;
-									if ($rowSelect["gibbonScaleID"]==$_SESSION[$guid]["primaryAssessmentScale"]) {
+									if ($rowSelect["name"]=="Learning Security") {
 										$selected="selected" ;
 									}
 									print "<option $selected value='" . $rowSelect["gibbonScaleID"] . "'>" . htmlPrep(_($rowSelect["name"])) . "</option>" ;
@@ -245,7 +245,7 @@ else {
 					</tr>
 					<tr id="gibbonRubricIDAttainment">
 						<td> 
-							<b><?php if ($attainmentAlternativeName!="") { print $attainmentAlternativeName . " " . _('Rubric') ; } else { print _('Attainment Rubric') ; } ?> *</b><br/>
+							<b><?php if ($attainmentAlternativeName!="") { print $attainmentAlternativeName . " " . _('Rubric') ; } else { print _('Attainment Rubric') ; } ?></b><br/>
 							<span style="font-size: 90%"><i><?php print _('Choose predefined rubric, if desired.') ?></i></span>
 						</td>
 						<td class="right">
@@ -310,8 +310,6 @@ else {
 						</td>
 					</tr>
 					
-					
-					
 					<script type="text/javascript">
 						/* Homework Control */
 						$(document).ready(function(){
@@ -338,7 +336,7 @@ else {
 					</tr>
 					<tr id="gibbonScaleIDEffortRow">
 						<td> 
-							<b><?php if ($effortAlternativeName!="") { print $effortAlternativeName . " " . _('Scale') ; } else { print _('Effort Scale') ; } ?> *</b><br/>
+							<b><?php if ($effortAlternativeName!="") { print $effortAlternativeName . " " . _('Scale') ; } else { print _('Effort Scale') ; } ?></b><br/>
 						</td>
 						<td class="right">
 							<select name="gibbonScaleIDEffort" id="gibbonScaleIDEffort" style="width: 302px">
@@ -352,11 +350,7 @@ else {
 								catch(PDOException $e) { }
 								print "<option value=''></option>" ;
 								while ($rowSelect=$resultSelect->fetch()) {
-									$selected="" ;
-									if ($rowSelect["gibbonScaleID"]==$_SESSION[$guid]["primaryAssessmentScale"]) {
-										$selected="selected" ;
-									}
-									print "<option $selected value='" . $rowSelect["gibbonScaleID"] . "'>" . htmlPrep(_($rowSelect["name"])) . "</option>" ;
+									print "<option value='" . $rowSelect["gibbonScaleID"] . "'>" . htmlPrep(_($rowSelect["name"])) . "</option>" ;
 								}
 								?>				
 							</select>
@@ -364,7 +358,7 @@ else {
 					</tr>
 					<tr id="gibbonRubricIDEffortRow">
 						<td> 
-							<b><?php if ($effortAlternativeName!="") { print $effortAlternativeName . " " . _('Rubric') ; } else { print _('Effort Rubric') ; } ?> *</b><br/>
+							<b><?php if ($effortAlternativeName!="") { print $effortAlternativeName . " " . _('Rubric') ; } else { print _('Effort Rubric') ; } ?></b><br/>
 							<span style="font-size: 90%"><i><?php print _('Choose predefined rubric, if desired.') ?></i></span>
 						</td>
 						<td class="right">
@@ -393,7 +387,11 @@ else {
 									else {
 										$label=$rowSelect["category"] . " - " . $rowSelect["name"] ;
 									}
-									print "<option value='" . $rowSelect["gibbonRubricID"] . "'>$label</option>" ;
+									$selected="" ;
+									if (strpos($rowSelect["name"], "Approach to Learning")!==FALSE) {
+										$selected="selected" ;
+									}
+									print "<option $selected value='" . $rowSelect["gibbonRubricID"] . "'>$label</option>" ;
 								}
 								if ($row["gibbonDepartmentID"]!="") {
 									?>
@@ -421,7 +419,11 @@ else {
 										else {
 											$label=$rowSelect["category"] . " - " . $rowSelect["name"] ;
 										}
-										print "<option value='" . $rowSelect["gibbonRubricID"] . "'>$label</option>" ;
+										$selected="" ;
+										if (strpos($rowSelect["name"], "Approach to Learning")!==FALSE) {
+											$selected="selected" ;
+										}
+										print "<option $selected value='" . $rowSelect["gibbonRubricID"] . "'>$label</option>" ;
 									}
 								}
 								?>				
@@ -487,6 +489,6 @@ else {
 		}	
 	}
 	//Print sidebar
-	$_SESSION[$guid]["sidebarExtra"]=sidebarExtra($guid, $connection2, $gibbonCourseClassID) ;
+	$_SESSION[$guid]["sidebarExtra"]=sidebarExtra($guid, $connection2, $gibbonCourseClassID, "manage", "Manage CFAs_all") ;
 }
 ?>

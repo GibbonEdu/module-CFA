@@ -25,7 +25,7 @@ $description="The CFA module allows schools to run a program of Common Formative
 $entryURL="cfa_write.php" ;
 $type="Additional" ;
 $category="Assess" ;
-$version="1.1.01" ;
+$version="1.2.00" ;
 $author="Ross Parker" ;
 $url="http://rossparker.org" ;
 
@@ -70,7 +70,7 @@ $moduleTables[1]="CREATE TABLE `cfaEntry` (
 
 
 //Action rows
-$actionRows[0]["name"]="Manage CFAs" ;
+$actionRows[0]["name"]="Manage CFAs_all" ;
 $actionRows[0]["precedence"]="0";
 $actionRows[0]["category"]="Manage & Assess" ;
 $actionRows[0]["description"]="Allows privileged users to create and manage CFA columns." ;
@@ -165,6 +165,22 @@ $actionRows[5]["categoryPermissionStaff"]="Y" ;
 $actionRows[5]["categoryPermissionStudent"]="N" ;
 $actionRows[5]["categoryPermissionParent"]="N" ;
 $actionRows[5]["categoryPermissionOther"]="N" ;
+
+$actionRows[6]["name"]="Manage CFAs_department" ;
+$actionRows[6]["precedence"]="0";
+$actionRows[6]["category"]="Manage & Assess" ;
+$actionRows[6]["description"]="Allows privileged users to edit CFA columns with departments they have Coordinator rights." ;
+$actionRows[6]["URLList"]="cfa_manage.php, cfa_manage_edit.php" ;
+$actionRows[6]["entryURL"]="cfa_manage.php" ;
+$actionRows[6]["defaultPermissionAdmin"]="N" ;
+$actionRows[6]["defaultPermissionTeacher"]="N" ;
+$actionRows[6]["defaultPermissionStudent"]="N" ;
+$actionRows[6]["defaultPermissionParent"]="N" ;
+$actionRows[6]["defaultPermissionSupport"]="N" ;
+$actionRows[6]["categoryPermissionStaff"]="Y" ;
+$actionRows[6]["categoryPermissionStudent"]="N" ;
+$actionRows[6]["categoryPermissionParent"]="N" ;
+$actionRows[6]["categoryPermissionOther"]="N" ;
 
 $array=array() ;
 $array=array() ;

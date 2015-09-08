@@ -45,147 +45,267 @@ if (isActionAccessible($guid, $connection2, "/modules/CFA/cfa_manage_edit.php")=
 	header("Location: {$URL}");
 }
 else {
-	if (empty($_POST)) {
-		$URL.="&updateReturn=fail5" ;
+	$highestAction=getHighestGroupedAction($guid, $_GET["address"], $connection2) ;
+	if ($highestAction==FALSE) {
+		//Fail 0
+		$URL.="&updateReturn=fail0" ;
 		header("Location: {$URL}");
 	}
 	else {
-		//Proceed!
-		//Check if school year specified
-		if ($cfaColumnID=="" OR $gibbonCourseClassID=="") {
-			//Fail1
-			$URL.="&updateReturn=fail1" ;
+		if (empty($_POST)) {
+			$URL.="&updateReturn=fail5" ;
 			header("Location: {$URL}");
 		}
 		else {
-			try {
-				$data=array("cfaColumnID"=>$cfaColumnID, "gibbonCourseClassID"=>$gibbonCourseClassID); 
-				$sql="SELECT * FROM cfaColumn WHERE cfaColumnID=:cfaColumnID AND gibbonCourseClassID=:gibbonCourseClassID" ;
-				$result=$connection2->prepare($sql);
-				$result->execute($data);
-			}
-			catch(PDOException $e) { 
-				//Fail2
-				$URL.="&updateReturn=fail2" ;
-				header("Location: {$URL}");
-				break ;
-			}
-
-			if ($result->rowCount()!=1) {
-				//Fail 2
-				$URL.="&updateReturn=fail2" ;
+			//Proceed!
+			//Check if school year specified
+			if ($cfaColumnID=="" OR $gibbonCourseClassID=="") {
+				//Fail1
+				$URL.="&updateReturn=fail1" ;
 				header("Location: {$URL}");
 			}
 			else {
-				$row=$result->fetch() ;
-				//Validate Inputs
-				$name=$_POST["name"] ;
-				$description=$_POST["description"] ;
-				//Sort out attainment
-				$attainment=$_POST["attainment"] ;
-				if ($attainment=="N") {
-					$gibbonScaleIDAttainment=NULL ;
-					$gibbonRubricIDAttainment=NULL ;
+				try {
+					if ($highestAction=="Manage CFAs_all") { //Full manage
+						$data=array("cfaColumnID"=>$cfaColumnID, "gibbonCourseClassID"=>$gibbonCourseClassID); 
+						$sql="SELECT * FROM cfaColumn WHERE cfaColumnID=:cfaColumnID AND gibbonCourseClassID=:gibbonCourseClassID" ;
+					}
+					else {
+						$data=array("cfaColumnID"=>$cfaColumnID, "gibbonCourseClassID"=>$gibbonCourseClassID, "gibbonPersonID"=>$_SESSION[$guid]["gibbonPersonID"]); 
+						$sql="SELECT * FROM cfaColumn JOIN gibbonCourseClass ON (cfaColumn.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) JOIN gibbonCourse ON (gibbonCourseClass.gibbonCourseID=gibbonCourse.gibbonCourseID) JOIN gibbonDepartment ON (gibbonCourse.gibbonDepartmentID=gibbonDepartment.gibbonDepartmentID) JOIN gibbonDepartmentStaff ON (gibbonDepartmentStaff.gibbonDepartmentID=gibbonDepartment.gibbonDepartmentID) WHERE cfaColumnID=:cfaColumnID AND cfaColumn.gibbonCourseClassID=:gibbonCourseClassID AND gibbonPersonID=:gibbonPersonID AND role='Coordinator'" ;
+					}
+					$result=$connection2->prepare($sql);
+					$result->execute($data);
+				}
+				catch(PDOException $e) { 
+					//Fail2
+					$URL.="&updateReturn=fail2" ;
+					header("Location: {$URL}");
+					break ;
+				}
+
+				if ($result->rowCount()!=1) {
+					//Fail 2
+					$URL.="&updateReturn=fail2" ;
+					header("Location: {$URL}");
 				}
 				else {
-					if ($_POST["gibbonScaleIDAttainment"]=="") {
-						$gibbonScaleIDAttainment=NULL ;
-					}
-					else {
-						$gibbonScaleIDAttainment=$_POST["gibbonScaleIDAttainment"] ;
-					}
-					if ($_POST["gibbonRubricIDAttainment"]=="") {
-						$gibbonRubricIDAttainment=NULL ;
-					}
-					else {
-						$gibbonRubricIDAttainment=$_POST["gibbonRubricIDAttainment"] ;
-					}
-				}
-				//Sort out effort
-				$effort=$_POST["effort"] ;
-				if ($effort=="N") {
-					$gibbonScaleIDEffort=NULL ;
-					$gibbonRubricIDEffort=NULL ;
-				}
-				else {
-					if ($_POST["gibbonScaleIDEffort"]=="") {
-						$gibbonScaleIDEffort=NULL ;
-					}
-					else {
-						$gibbonScaleIDEffort=$_POST["gibbonScaleIDEffort"] ;
-					}
-					if ($_POST["gibbonRubricIDEffort"]=="") {
-						$gibbonRubricIDEffort=NULL ;
-					}
-					else {
-						$gibbonRubricIDEffort=$_POST["gibbonRubricIDEffort"] ;
-					}
-				}
-				$comment=$_POST["comment"] ;
-				$uploadedResponse=$_POST["uploadedResponse"] ;
-				$completeDate=$_POST["completeDate"] ;
-				if ($completeDate=="") {
-					$completeDate=NULL ;
-					$complete="N" ;
-				}
-				else {
-					$completeDate=dateConvert($guid, $completeDate) ;
-					$complete="Y" ;
-				}
-				$gibbonPersonIDLastEdit=$_SESSION[$guid]["gibbonPersonID"] ;
-			
-				$time=time() ;
-				//Move attached file, if there is one
-				if ($_FILES['file']["tmp_name"]!="") {
-					//Check for folder in uploads based on today's date
-					$path=$_SESSION[$guid]["absolutePath"] ;
-					if (is_dir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time))==FALSE) {
-						mkdir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time), 0777, TRUE) ;
-					}
-					$unique=FALSE;
-					$count=0 ;
-					while ($unique==FALSE AND $count<100) {
-						$suffix=randomPassword(16) ;
-						$attachment="uploads/" . date("Y", $time) . "/" . date("m", $time) . "/" . preg_replace("/[^a-zA-Z0-9]/", "", $name) . "_$suffix" . strrchr($_FILES["file"]["name"], ".") ;
-						if (!(file_exists($path . "/" . $attachment))) {
-							$unique=TRUE ;
+					$row=$result->fetch() ;
+					
+					if ($highestAction=="Manage CFAs_all") { //Full manage
+						//Validate Inputs
+						$name=$_POST["name"] ;
+						$description=$_POST["description"] ;
+						//Sort out attainment
+						$attainment=$_POST["attainment"] ;
+						if ($attainment=="N") {
+							$gibbonScaleIDAttainment=NULL ;
+							$gibbonRubricIDAttainment=NULL ;
 						}
-						$count++ ;
-					}
+						else {
+							if ($_POST["gibbonScaleIDAttainment"]=="") {
+								$gibbonScaleIDAttainment=NULL ;
+							}
+							else {
+								$gibbonScaleIDAttainment=$_POST["gibbonScaleIDAttainment"] ;
+							}
+							if ($_POST["gibbonRubricIDAttainment"]=="") {
+								$gibbonRubricIDAttainment=NULL ;
+							}
+							else {
+								$gibbonRubricIDAttainment=$_POST["gibbonRubricIDAttainment"] ;
+							}
+						}
+						//Sort out effort
+						$effort=$_POST["effort"] ;
+						if ($effort=="N") {
+							$gibbonScaleIDEffort=NULL ;
+							$gibbonRubricIDEffort=NULL ;
+						}
+						else {
+							if ($_POST["gibbonScaleIDEffort"]=="") {
+								$gibbonScaleIDEffort=NULL ;
+							}
+							else {
+								$gibbonScaleIDEffort=$_POST["gibbonScaleIDEffort"] ;
+							}
+							if ($_POST["gibbonRubricIDEffort"]=="") {
+								$gibbonRubricIDEffort=NULL ;
+							}
+							else {
+								$gibbonRubricIDEffort=$_POST["gibbonRubricIDEffort"] ;
+							}
+						}
+						$comment=$_POST["comment"] ;
+						$uploadedResponse=$_POST["uploadedResponse"] ;
+						$completeDate=$_POST["completeDate"] ;
+						if ($completeDate=="") {
+							$completeDate=NULL ;
+							$complete="N" ;
+						}
+						else {
+							$completeDate=dateConvert($guid, $completeDate) ;
+							$complete="Y" ;
+						}
+						$gibbonPersonIDLastEdit=$_SESSION[$guid]["gibbonPersonID"] ;
+			
+						$time=time() ;
+						//Move attached file, if there is one
+						if ($_FILES['file']["tmp_name"]!="") {
+							//Check for folder in uploads based on today's date
+							$path=$_SESSION[$guid]["absolutePath"] ;
+							if (is_dir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time))==FALSE) {
+								mkdir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time), 0777, TRUE) ;
+							}
+							$unique=FALSE;
+							$count=0 ;
+							while ($unique==FALSE AND $count<100) {
+								$suffix=randomPassword(16) ;
+								$attachment="uploads/" . date("Y", $time) . "/" . date("m", $time) . "/" . preg_replace("/[^a-zA-Z0-9]/", "", $name) . "_$suffix" . strrchr($_FILES["file"]["name"], ".") ;
+								if (!(file_exists($path . "/" . $attachment))) {
+									$unique=TRUE ;
+								}
+								$count++ ;
+							}
 				
-					if (!(move_uploaded_file($_FILES["file"]["tmp_name"],$path . "/" . $attachment))) {
-						//Fail 5
-						$URL.="&updateReturn=fail5" ;
-						header("Location: {$URL}");
-					}
-				}
-				else {
-					$attachment=$row["attachment"] ;
-				}
+							if (!(move_uploaded_file($_FILES["file"]["tmp_name"],$path . "/" . $attachment))) {
+								//Fail 5
+								$URL.="&updateReturn=fail5" ;
+								header("Location: {$URL}");
+							}
+						}
+						else {
+							$attachment=$row["attachment"] ;
+						}
 		
-				if ($name=="" OR $description=="") {
-					//Fail 3
-					$URL.="&updateReturn=fail3" ;
-					header("Location: {$URL}");
-				}
-				else {
-					//Write to database
-					try {
-						$data=array("gibbonCourseClassID"=>$gibbonCourseClassID, "name"=>$name, "description"=>$description, "attainment"=>$attainment, "gibbonScaleIDAttainment"=>$gibbonScaleIDAttainment, "effort"=>$effort, "gibbonScaleIDEffort"=>$gibbonScaleIDEffort, "gibbonRubricIDAttainment"=>$gibbonRubricIDAttainment, "gibbonRubricIDEffort"=>$gibbonRubricIDEffort, "comment"=>$comment, "uploadedResponse"=>$uploadedResponse, "completeDate"=>$completeDate, "complete"=>$complete, "attachment"=>$attachment, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit, "cfaColumnID"=>$cfaColumnID); 
-						$sql="UPDATE cfaColumn SET gibbonCourseClassID=:gibbonCourseClassID, name=:name, description=:description, attainment=:attainment, gibbonScaleIDAttainment=:gibbonScaleIDAttainment, effort=:effort, gibbonScaleIDEffort=:gibbonScaleIDEffort, gibbonRubricIDAttainment=:gibbonRubricIDAttainment, gibbonRubricIDEffort=:gibbonRubricIDEffort, comment=:comment, uploadedResponse=:uploadedResponse, completeDate=:completeDate, complete=:complete, attachment=:attachment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit WHERE cfaColumnID=:cfaColumnID" ;
-						$result=$connection2->prepare($sql);
-						$result->execute($data);
-					}
-					catch(PDOException $e) { 
-						//Fail 2
-						$URL.="&updateReturn=fail2" ;
-						header("Location: {$URL}");
-						break ;
-					}
+						if ($name=="" OR $description=="") {
+							//Fail 3
+							$URL.="&updateReturn=fail3" ;
+							header("Location: {$URL}");
+						}
+						else {
+							//Write to database
+							try {
+								$data=array("gibbonCourseClassID"=>$gibbonCourseClassID, "name"=>$name, "description"=>$description, "attainment"=>$attainment, "gibbonScaleIDAttainment"=>$gibbonScaleIDAttainment, "effort"=>$effort, "gibbonScaleIDEffort"=>$gibbonScaleIDEffort, "gibbonRubricIDAttainment"=>$gibbonRubricIDAttainment, "gibbonRubricIDEffort"=>$gibbonRubricIDEffort, "comment"=>$comment, "uploadedResponse"=>$uploadedResponse, "completeDate"=>$completeDate, "complete"=>$complete, "attachment"=>$attachment, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit, "cfaColumnID"=>$cfaColumnID); 
+								$sql="UPDATE cfaColumn SET gibbonCourseClassID=:gibbonCourseClassID, name=:name, description=:description, attainment=:attainment, gibbonScaleIDAttainment=:gibbonScaleIDAttainment, effort=:effort, gibbonScaleIDEffort=:gibbonScaleIDEffort, gibbonRubricIDAttainment=:gibbonRubricIDAttainment, gibbonRubricIDEffort=:gibbonRubricIDEffort, comment=:comment, uploadedResponse=:uploadedResponse, completeDate=:completeDate, complete=:complete, attachment=:attachment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit WHERE cfaColumnID=:cfaColumnID" ;
+								$result=$connection2->prepare($sql);
+								$result->execute($data);
+							}
+							catch(PDOException $e) { 
+								//Fail 2
+								$URL.="&updateReturn=fail2" ;
+								header("Location: {$URL}");
+								break ;
+							}
 		
-					//Success 0
-					$URL.="&updateReturn=success0" ;
-					header("Location: {$URL}");
+							//Success 0
+							$URL.="&updateReturn=success0" ;
+							header("Location: {$URL}");
+						}
+					}
+					else {
+						//Validate Inputs
+						$description=$_POST["description"] ;
+						//Sort out attainment
+						if ($_POST["gibbonRubricIDAttainment"]=="") {
+							$gibbonRubricIDAttainment=NULL ;
+						}
+						else {
+							$gibbonRubricIDAttainment=$_POST["gibbonRubricIDAttainment"] ;
+						}
+						$completeDate=$_POST["completeDate"] ;
+						if ($completeDate=="") {
+							$completeDate=NULL ;
+							$complete="N" ;
+						}
+						else {
+							$completeDate=dateConvert($guid, $completeDate) ;
+							$complete="Y" ;
+						}
+						$gibbonPersonIDLastEdit=$_SESSION[$guid]["gibbonPersonID"] ;
+						$groupingID=$row["groupingID"] ;
+						$time=time() ;
+						//Move attached file, if there is one
+						if ($_FILES['file']["tmp_name"]!="") {
+							//Check for folder in uploads based on today's date
+							$path=$_SESSION[$guid]["absolutePath"] ;
+							if (is_dir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time))==FALSE) {
+								mkdir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time), 0777, TRUE) ;
+							}
+							$unique=FALSE;
+							$count=0 ;
+							while ($unique==FALSE AND $count<100) {
+								$suffix=randomPassword(16) ;
+								$attachment="uploads/" . date("Y", $time) . "/" . date("m", $time) . "/" . preg_replace("/[^a-zA-Z0-9]/", "", $row["name"]) . "_$suffix" . strrchr($_FILES["file"]["name"], ".") ;
+								if (!(file_exists($path . "/" . $attachment))) {
+									$unique=TRUE ;
+								}
+								$count++ ;
+							}
+				
+							if (!(move_uploaded_file($_FILES["file"]["tmp_name"],$path . "/" . $attachment))) {
+								//Fail 5
+								$URL.="&updateReturn=fail5" ;
+								header("Location: {$URL}");
+							}
+						}
+						else {
+							$attachment=$row["attachment"] ;
+						}
+						
+						if ($description=="") {
+							//Fail 3
+							$URL.="&updateReturn=fail3" ;
+							header("Location: {$URL}");
+						}
+						else {
+							//Write to database
+							try {
+								$data=array("description"=>$description, "gibbonRubricIDAttainment"=>$gibbonRubricIDAttainment, "completeDate"=>$completeDate, "complete"=>$complete, "attachment"=>$attachment, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit, "cfaColumnID"=>$cfaColumnID); 
+								$sql="UPDATE cfaColumn SET description=:description, gibbonRubricIDAttainment=:gibbonRubricIDAttainment, completeDate=:completeDate, complete=:complete, attachment=:attachment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit WHERE cfaColumnID=:cfaColumnID" ;
+								$result=$connection2->prepare($sql);
+								$result->execute($data);
+							}
+							catch(PDOException $e) { 
+								//Fail 2
+								$URL.="&updateReturn=fail2" ;
+								header("Location: {$URL}");
+								break ;
+							}
+							
+							
+							//ATTEMPT TO UPDATE LINKED COLUMNS
+							$partialFail=FALSE ;
+							if (isset($_POST["gibbonCourseClassID"])) {
+								if (is_array($_POST["gibbonCourseClassID"])) {
+									$gibbonCourseClassIDs=$_POST["gibbonCourseClassID"] ;
+									foreach ($gibbonCourseClassIDs AS $gibbonCourseClassID2) {
+										//Write to database
+										try {
+											$data=array("description"=>$description, "gibbonRubricIDAttainment"=>$gibbonRubricIDAttainment, "completeDate"=>$completeDate, "complete"=>$complete, "attachment"=>$attachment, "gibbonPersonIDLastEdit"=>$gibbonPersonIDLastEdit, "groupingID"=>$groupingID, "gibbonCourseClassID"=>$gibbonCourseClassID2); 
+											$sql="UPDATE cfaColumn SET description=:description, gibbonRubricIDAttainment=:gibbonRubricIDAttainment, completeDate=:completeDate, complete=:complete, attachment=:attachment, gibbonPersonIDLastEdit=:gibbonPersonIDLastEdit WHERE groupingID=:groupingID AND gibbonCourseClassID=:gibbonCourseClassID" ;
+											$result=$connection2->prepare($sql);
+											$result->execute($data);
+										}
+										catch(PDOException $e) { 
+											$partialFail=TRUE ;
+										}
+									}
+								}
+							}
+							
+							if ($partialFail==TRUE) {
+								//Fail 6
+								$URL.="&updateReturn=fail6" ;
+								header("Location: {$URL}");
+							}
+							else {
+								//Success 0
+								$URL.="&updateReturn=success0" ;
+								header("Location: {$URL}");
+							}
+						}
+					}
 				}
 			}
 		}

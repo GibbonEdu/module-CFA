@@ -216,7 +216,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 	return $output ;
 }
 
-function sidebarExtra($guid, $connection2, $gibbonCourseClassID, $mode="manage") {
+function sidebarExtra($guid, $connection2, $gibbonCourseClassID, $mode="manage", $highestAction="") {
 	$output="" ;
 	
 	$output.="<h2>" ;
@@ -235,42 +235,67 @@ function sidebarExtra($guid, $connection2, $gibbonCourseClassID, $mode="manage")
 						$output.="<input name='q' id='q' type='hidden' value='/modules/CFA/cfa_manage.php'>" ;
 					}
 					$output.="<select name='gibbonCourseClassID' id='gibbonCourseClassID' style='width:161px'>" ;
-						$output.="<option value=''></option>" ;
+						if ($mode=="write" OR ($mode=="manage" AND $highestAction=="Manage CFAs_all")) { //Full listing
+							$output.="<option value=''></option>" ;
+								try {
+									$dataSelect=array("gibbonSchoolYearID"=>$_SESSION[$guid]["gibbonSchoolYearID"], "gibbonPersonID"=>$_SESSION[$guid]["gibbonPersonID"]); 
+									$sqlSelect="SELECT gibbonCourseClass.gibbonCourseClassID, gibbonCourse.nameShort AS course, gibbonCourseClass.nameShort AS class FROM gibbonCourseClassPerson JOIN gibbonCourseClass ON (gibbonCourseClassPerson.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) JOIN gibbonCourse ON (gibbonCourseClass.gibbonCourseID=gibbonCourse.gibbonCourseID) WHERE gibbonCourse.gibbonSchoolYearID=:gibbonSchoolYearID AND gibbonPersonID=:gibbonPersonID ORDER BY course, class" ;
+									$resultSelect=$connection2->prepare($sqlSelect);
+									$resultSelect->execute($dataSelect);
+								}
+								catch(PDOException $e) { }
+								$output.="<optgroup label='--" . _('My Classes') . "--'>" ;
+								while ($rowSelect=$resultSelect->fetch()) {
+									$selected="" ;
+									if ($rowSelect["gibbonCourseClassID"]==$gibbonCourseClassID AND $selectCount==0) {
+										$selected="selected" ;
+										$selectCount++ ;
+									}
+									$output.="<option $selected value='" . $rowSelect["gibbonCourseClassID"] . "'>" . htmlPrep($rowSelect["course"]) . "." . htmlPrep($rowSelect["class"]) . "</option>" ;
+								}
+							$output.="</optgroup>" ;
+						
+							if ($mode=="manage") {
+								try {
+									$dataSelect=array("gibbonSchoolYearID"=>$_SESSION[$guid]["gibbonSchoolYearID"]); 
+									$sqlSelect="SELECT gibbonCourseClass.gibbonCourseClassID, gibbonCourse.nameShort AS course, gibbonCourseClass.nameShort AS class FROM gibbonCourseClass JOIN gibbonCourse ON (gibbonCourseClass.gibbonCourseID=gibbonCourse.gibbonCourseID) WHERE gibbonCourse.gibbonSchoolYearID=:gibbonSchoolYearID ORDER BY course, class" ;
+									$resultSelect=$connection2->prepare($sqlSelect);
+									$resultSelect->execute($dataSelect);
+								}
+								catch(PDOException $e) { }
+								$output.="<optgroup label='--" . _('All Classes') . "--'>" ;
+									while ($rowSelect=$resultSelect->fetch()) {
+										$selected="" ;
+										if ($rowSelect["gibbonCourseClassID"]==$gibbonCourseClassID AND $selectCount==0) {
+											$selected="selected" ;
+											$selectCount++ ;
+										}
+										$output.="<option $selected value='" . $rowSelect["gibbonCourseClassID"] . "'>" . htmlPrep($rowSelect["course"]) . "." . htmlPrep($rowSelect["class"]) . "</option>" ;
+									}
+								$output.="</optgroup>" ;
+							}
+						}
+						else {
 							try {
-								$dataSelect=array("gibbonSchoolYearID"=>$_SESSION[$guid]["gibbonSchoolYearID"], "gibbonPersonID"=>$_SESSION[$guid]["gibbonPersonID"]); 
-								$sqlSelect="SELECT gibbonCourseClass.gibbonCourseClassID, gibbonCourse.nameShort AS course, gibbonCourseClass.nameShort AS class FROM gibbonCourseClassPerson JOIN gibbonCourseClass ON (gibbonCourseClassPerson.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) JOIN gibbonCourse ON (gibbonCourseClass.gibbonCourseID=gibbonCourse.gibbonCourseID) WHERE gibbonCourse.gibbonSchoolYearID=:gibbonSchoolYearID AND gibbonPersonID=:gibbonPersonID ORDER BY course, class" ;
+								$dataSelect=array("gibbonPersonID"=>$_SESSION[$guid]["gibbonPersonID"], "gibbonSchoolYearID"=>$_SESSION[$guid]["gibbonSchoolYearID"]); 
+								$sqlSelect="SELECT gibbonCourseClass.gibbonCourseClassID, gibbonCourse.nameShort AS course, gibbonCourseClass.nameShort AS class FROM gibbonCourseClass JOIN gibbonCourse ON (gibbonCourseClass.gibbonCourseID=gibbonCourse.gibbonCourseID) JOIN gibbonDepartment ON (gibbonCourse.gibbonDepartmentID=gibbonDepartment.gibbonDepartmentID) JOIN gibbonDepartmentStaff ON (gibbonDepartmentStaff.gibbonDepartmentID=gibbonDepartment.gibbonDepartmentID) WHERE gibbonDepartmentStaff.gibbonPersonID=:gibbonPersonID AND gibbonDepartmentStaff.role='Coordinator' AND gibbonCourse.gibbonSchoolYearID=:gibbonSchoolYearID ORDER BY course, class" ;
 								$resultSelect=$connection2->prepare($sqlSelect);
 								$resultSelect->execute($dataSelect);
 							}
 							catch(PDOException $e) { }
-							$output.="<optgroup label='--" . _('My Classes') . "--'>" ;
-							while ($rowSelect=$resultSelect->fetch()) {
-								$selected="" ;
-								if ($rowSelect["gibbonCourseClassID"]==$gibbonCourseClassID AND $selectCount==0) {
-									$selected="selected" ;
-									$selectCount++ ;
+							$output.="<optgroup label='--" . _('Departmental Classes') . "--'>" ;
+								while ($rowSelect=$resultSelect->fetch()) {
+									$selected="" ;
+									if ($gibbonCourseClassID!="") {
+										if ($rowSelect["gibbonCourseClassID"]==$gibbonCourseClassID AND $selectCount==0) {
+											$selected="selected" ;
+											$selectCount++ ;
+										}
+									}
+									$output.="<option $selected value='" . $rowSelect["gibbonCourseClassID"] . "'>" . htmlPrep($rowSelect["course"]) . "." . htmlPrep($rowSelect["class"]) . "</option>" ;
 								}
-								$output.="<option $selected value='" . $rowSelect["gibbonCourseClassID"] . "'>" . htmlPrep($rowSelect["course"]) . "." . htmlPrep($rowSelect["class"]) . "</option>" ;
-							}
-						$output.="</optgroup>" ;
-						
-						try {
-							$dataSelect=array("gibbonSchoolYearID"=>$_SESSION[$guid]["gibbonSchoolYearID"]); 
-							$sqlSelect="SELECT gibbonCourseClass.gibbonCourseClassID, gibbonCourse.nameShort AS course, gibbonCourseClass.nameShort AS class FROM gibbonCourseClass JOIN gibbonCourse ON (gibbonCourseClass.gibbonCourseID=gibbonCourse.gibbonCourseID) WHERE gibbonCourse.gibbonSchoolYearID=:gibbonSchoolYearID ORDER BY course, class" ;
-							$resultSelect=$connection2->prepare($sqlSelect);
-							$resultSelect->execute($dataSelect);
+							$output.="</optgroup>" ;
 						}
-						catch(PDOException $e) { }
-						$output.="<optgroup label='--" . _('All Classes') . "--'>" ;
-							while ($rowSelect=$resultSelect->fetch()) {
-								$selected="" ;
-								if ($rowSelect["gibbonCourseClassID"]==$gibbonCourseClassID AND $selectCount==0) {
-									$selected="selected" ;
-									$selectCount++ ;
-								}
-								$output.="<option $selected value='" . $rowSelect["gibbonCourseClassID"] . "'>" . htmlPrep($rowSelect["course"]) . "." . htmlPrep($rowSelect["class"]) . "</option>" ;
-							}
-						$output.="</optgroup>" ;
 					 $output.="</select>" ;
 				$output.="</td>" ;
 				$output.="<td class='right'>" ;

@@ -20,4 +20,12 @@ ALTER TABLE `cfaEntry` CHANGE `response` `response` TEXT CHARACTER SET utf8 COLL
 $sql[$count][0]="1.1.01" ;
 $sql[$count][1]="" ;
 
+//v1.2.00
+$sql[$count][0]="1.2.00" ;
+$sql[$count][1]="
+UPDATE gibbonAction SET name='Manage CFAs_all', precedence=1 WHERE name='Manage CFAs' AND gibbonModuleID=(SELECT gibbonModuleID FROM gibbonModule WHERE name='CFA');end
+INSERT INTO `gibbonAction` (`gibbonModuleID`, `name`, `precedence`, `category`, `description`, `URLList`, `entryURL`, `defaultPermissionAdmin`, `defaultPermissionTeacher`, `defaultPermissionStudent`, `defaultPermissionParent`, `defaultPermissionSupport`, `categoryPermissionStaff`, `categoryPermissionStudent`, `categoryPermissionParent`, `categoryPermissionOther`) VALUES ((SELECT gibbonModuleID FROM gibbonModule WHERE name='CFA'), 'Manage CFAs_department', 0, 'Manage & Assess', 'Allows privileged users to edit CFA columns with departments they have Coordinator rights.', 'cfa_manage.php, cfa_manage_edit.php', 'cfa_manage.php', 'N', 'N', 'N', 'N', 'N', 'Y', 'N', 'N', 'N') ;end
+" ;
+
+
 ?>

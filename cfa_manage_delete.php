@@ -127,7 +127,7 @@ else {
 		}
 	
 		//Print sidebar
-		$_SESSION[$guid]["sidebarExtra"]=sidebarExtra($guid, $connection2, $gibbonCourseClassID) ;
+		$_SESSION[$guid]["sidebarExtra"]=sidebarExtra($guid, $connection2, $gibbonCourseClassID, "manage", "Manage CFAs_all") ;
 	}
 }
 ?>

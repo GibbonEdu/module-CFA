@@ -161,61 +161,6 @@ else {
 					print "<form method='post' action='" . $_SESSION[$guid]["absoluteURL"] . "/modules/" . $_SESSION[$guid]["module"] . "/cfa_write_dataProcess.php?gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID&address=" . $_SESSION[$guid]["address"] . "' enctype='multipart/form-data'>" ;
 						print "<table class='smallIntBorder' cellspacing='0' style='width: 100%'>" ;
 							?>
-							<tr class='break'>
-								<?php
-								print "<td colspan=" . ($span) . ">" ;
-								?>
-									<h3><?php print _('Assessment Details') ?></h3>
-								</td>
-							</tr>
-							
-							<tr>
-								<td> 
-									<b><?php print _('Description') ?> *</b><br/>
-								</td>
-								<td class="right" colspan="<?php print $span ?>">
-									<input name="description" id="description" maxlength=1000 value="<?php print htmlPrep($row2["description"]) ?>" type="text" style="width: 300px">
-									<script type="text/javascript">
-										var description=new LiveValidation('description');
-										description.add(Validate.Presence);
-									 </script>
-								</td>
-							</tr>
-							<tr>
-								<td> 
-									<b><?php print _('Attachment') ?></b><br/>
-									<?php if ($row2["attachment"]!="") { ?>
-									<span style="font-size: 90%"><i><?php print _('Will overwrite existing attachment.') ?></i></span>
-									<?php } ?>
-								</td>
-								<td class="right" colspan="<?php print $span ?>">
-									<?php
-									if ($row2["attachment"]!="") {
-										print _("Current attachment:") . " <a href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $row2["attachment"] . "'>" . $row2["attachment"] . "</a><br/><br/>" ;
-									}
-									?>
-									<input type="file" name="file" id="file"><br/><br/>
-									<?php
-									//Get list of acceptable file extensions
-									try {
-										$dataExt=array(); 
-										$sqlExt="SELECT * FROM gibbonFileExtension" ;
-										$resultExt=$connection2->prepare($sqlExt);
-										$resultExt->execute($dataExt);
-									}
-									catch(PDOException $e) { }
-									$ext="" ;
-									while ($rowExt=$resultExt->fetch()) {
-										$ext=$ext . "'." . $rowExt["extension"] . "'," ;
-									}
-									?>
-							
-									<script type="text/javascript">
-										var file=new LiveValidation('file');
-										file.add( Validate.Inclusion, { within: [<?php print $ext ;?>], failureMessage: "Illegal file type!", partialMatch: true, caseSensitive: false } );
-									</script>
-								</td>
-							</tr>
 							<?php
 							
 							print "<tr class='head'>" ;

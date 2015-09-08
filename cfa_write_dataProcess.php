@@ -267,35 +267,6 @@ else {
 				}
 				
 				//Update column
-				$description=$_POST["description"] ;
-				$time=time() ;
-				//Move attached file, if there is one
-				if ($_FILES['file']["tmp_name"]!="") {
-					//Check for folder in uploads based on today's date
-					$path=$_SESSION[$guid]["absolutePath"] ;
-					if (is_dir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time))==FALSE) {
-						mkdir($path ."/uploads/" . date("Y", $time) . "/" . date("m", $time), 0777, TRUE) ;
-					}
-					$unique=FALSE;
-					$count3=0 ;
-					while ($unique==FALSE AND $count3<100) {
-						$suffix=randomPassword(16) ;
-						$attachment="uploads/" . date("Y", $time) . "/" . date("m", $time) . "/" . preg_replace("/[^a-zA-Z0-9]/", "", $name) . "_$suffix" . strrchr($_FILES["file"]["name"], ".") ;
-						if (!(file_exists($path . "/" . $attachment))) {
-							$unique=TRUE ;
-						}
-						$count3++ ;
-					}
-				
-					if (!(move_uploaded_file($_FILES["file"]["tmp_name"],$path . "/" . $attachment))) {
-						//Fail 5
-						$URL.="&updateReturn=fail5" ;
-						header("Location: {$URL}");
-					}
-				}
-				else {
-					$attachment=$attachmentCurrent ;
-				}
 				$completeDate=$_POST["completeDate"] ;
 				if ($completeDate=="") {
 					$completeDate=NULL ;
@@ -306,8 +277,8 @@ else {
 					$complete="Y" ;
 				}
 				try {
-					$data=array("attachment"=>$attachment, "description"=>$description, "completeDate"=>$completeDate, "complete"=>$complete, "cfaColumnID"=>$cfaColumnID); 
-					$sql="UPDATE cfaColumn SET attachment=:attachment, description=:description, completeDate=:completeDate, complete=:complete WHERE cfaColumnID=:cfaColumnID" ;
+					$data=array("completeDate"=>$completeDate, "complete"=>$complete, "cfaColumnID"=>$cfaColumnID); 
+					$sql="UPDATE cfaColumn SET completeDate=:completeDate, complete=:complete WHERE cfaColumnID=:cfaColumnID" ;
 					$result=$connection2->prepare($sql);
 					$result->execute($data);
 				}
