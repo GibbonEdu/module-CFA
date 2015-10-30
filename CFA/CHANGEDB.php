@@ -27,5 +27,11 @@ UPDATE gibbonAction SET name='Manage CFAs_all', precedence=1 WHERE name='Manage 
 INSERT INTO `gibbonAction` (`gibbonModuleID`, `name`, `precedence`, `category`, `description`, `URLList`, `entryURL`, `defaultPermissionAdmin`, `defaultPermissionTeacher`, `defaultPermissionStudent`, `defaultPermissionParent`, `defaultPermissionSupport`, `categoryPermissionStaff`, `categoryPermissionStudent`, `categoryPermissionParent`, `categoryPermissionOther`) VALUES ((SELECT gibbonModuleID FROM gibbonModule WHERE name='CFA'), 'Manage CFAs_department', 0, 'Manage & Assess', 'Allows privileged users to edit CFA columns with departments they have Coordinator rights.', 'cfa_manage.php, cfa_manage_edit.php', 'cfa_manage.php', 'N', 'N', 'N', 'N', 'N', 'Y', 'N', 'N', 'N') ;end
 " ;
 
+//v1.3.00
+$sql[$count][0]="1.3.00" ;
+$sql[$count][1]="
+ALTER TABLE `cfaColumn` ADD `gibbonPlannerEntryID` INT(14) UNSIGNED ZEROFILL NULL DEFAULT NULL AFTER `uploadedResponse`;end
+" ;
+
 
 ?>

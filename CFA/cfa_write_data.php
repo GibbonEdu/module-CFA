@@ -160,13 +160,17 @@ else {
 				
 					print "<form method='post' action='" . $_SESSION[$guid]["absoluteURL"] . "/modules/" . $_SESSION[$guid]["module"] . "/cfa_write_dataProcess.php?gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID&address=" . $_SESSION[$guid]["address"] . "' enctype='multipart/form-data'>" ;
 						print "<table class='smallIntBorder' cellspacing='0' style='width: 100%'>" ;
-							?>
-							<?php
 							
-							print "<tr class='head'>" ;
-								print "<th rowspan=2>" ;
-									print _("Student") ;
-								print "</th>" ;
+							$header="" ;
+							$header.="<tr class='break'>" ;
+								$header.="<td colspan=" . ($span) . ">" ;
+									$header.="<h3>Assessment Data</h3>" ;
+								$header.="</td>" ;
+							$header.="</tr>" ;
+							$header.="<tr class='head'>" ;
+								$header.="<th rowspan=2>" ;
+									$header.=_("Student") ;
+								$header.="</th>" ;
 								
 								$columnID=array() ;
 								$attainmentID=array() ;
@@ -185,33 +189,53 @@ else {
 									if (isset($row["gibbonRubricIDEffort"])) {
 										$gibbonRubricIDEffort[$i]=$row["gibbonRubricIDEffort"] ;
 									}
+									
+									//WORK OUT IF THERE IS SUBMISSION
+									if ($row2["gibbonPlannerEntryID"]!=NULL) {
+										try {
+											$dataSub=array("gibbonPlannerEntryID"=>$row2["gibbonPlannerEntryID"]); 
+											$sqlSub="SELECT * FROM gibbonPlannerEntry WHERE gibbonPlannerEntryID=:gibbonPlannerEntryID AND homeworkSubmission='Y'" ;
+											$resultSub=$connection2->prepare($sqlSub);
+											$resultSub->execute($dataSub);
+										}
+										catch(PDOException $e) { 
+											print "<div class='error'>" . $e->getMessage() . "</div>" ; 
+										}
+									
+										if ($resultSub->rowCount()==1) {
+											$submission=TRUE ;
+											$rowSub=$resultSub->fetch() ;
+											$homeworkDueDateTime=$rowSub["homeworkDueDateTime"] ;
+											$lessonDate[$i]=$rowSub["date"] ;
+										}
+									}
 								
-									print "<th style='text-align: center' colspan=$span-2>" ;
-										print "<span title='" . htmlPrep($row2["description"]) . "'>" . $row2["name"] . "<br/>" ;
-										print "<span style='font-size: 90%; font-style: italic; font-weight: normal'>" ;
+									$header.="<th style='text-align: center' colspan=$span-2>" ;
+										$header.="<span title='" . htmlPrep($row2["description"]) . "'>" . $row2["name"] . "<br/>" ;
+										$header.="<span style='font-size: 90%; font-style: italic; font-weight: normal'>" ;
 										if ($row2["completeDate"]!="") {
-											print _("Marked on") . " " . dateConvertBack($guid, $row2["completeDate"]) . "<br/>" ;
+											$header.=_("Marked on") . " " . dateConvertBack($guid, $row2["completeDate"]) . "<br/>" ;
 										}
 										else {
-											print _("Unmarked") . "<br/>" ;
+											$header.=_("Unmarked") . "<br/>" ;
 										}
 										if ($row2["attachment"]!="" AND file_exists($_SESSION[$guid]["absolutePath"] . "/" . $row2["attachment"])) {
-											print "<a title='" . _('Download more information') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $row2["attachment"] . "'>" . _('More info') . "</a>"; 
+											$header.="<a title='" . _('Download more information') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $row2["attachment"] . "'>" . _('More info') . "</a>"; 
 										}
-										print "</span><br/>" ;
-									print "</th>" ;
+										$header.="</span><br/>" ;
+									$header.="</th>" ;
 								}
-							print "</tr>" ;
+							$header.="</tr>" ;
 						
-							print "<tr class='head'>" ;
+							$header.="<tr class='head'>" ;
 								for ($i=0;$i<$columns;$i++) {
 									if ($submission==TRUE) {
-										print "<th style='text-align: center; max-width: 30px'>" ;
-											print "<span title='" . _('Submitted Work') . "'>" . _('Sub') . "</span>" ;
-										print "</th>" ;
+										$header.="<th style='text-align: center; max-width: 30px'>" ;
+											$header.="<span title='" . _('Submitted Work') . "'>" . _('Sub') . "</span>" ;
+										$header.="</th>" ;
 									}
 									if ($row2["attainment"]=="Y") {
-										print "<th style='text-align: center; width: 30px'>" ;
+										$header.="<th style='text-align: center; width: 30px'>" ;
 											$scale="" ;
 											if ($attainmentID[$i]!="") {
 												try {
@@ -229,19 +253,19 @@ else {
 													}
 												}
 												$gibbonScaleIDAttainment=$rowScale["gibbonScaleID"] ;
-												print "<input name='scaleAttainment' id='scaleAttainment' value='" . $attainmentID[$i] . "' type='hidden'>" ;
-												print "<input name='lowestAcceptableAttainment' id='lowestAcceptableAttainment' value='" . $rowScale["lowestAcceptable"] . "' type='hidden'>" ;
+												$header.="<input name='scaleAttainment' id='scaleAttainment' value='" . $attainmentID[$i] . "' type='hidden'>" ;
+												$header.="<input name='lowestAcceptableAttainment' id='lowestAcceptableAttainment' value='" . $rowScale["lowestAcceptable"] . "' type='hidden'>" ;
 											}
 											if ($attainmentAlternativeName!="" AND $attainmentAlternativeNameAbrev!="") {
-												print "<span title='" . $attainmentAlternativeName . htmlPrep($scale) . "'>" . $attainmentAlternativeNameAbrev . "</span>" ;
+												$header.="<span title='" . $attainmentAlternativeName . htmlPrep($scale) . "'>" . $attainmentAlternativeNameAbrev . "</span>" ;
 											}
 											else {
-												print "<span title='" . _('Attainment') . htmlPrep($scale) . "'>" . _('Att') . "</span>" ;
+												$header.="<span title='" . _('Attainment') . htmlPrep($scale) . "'>" . _('Att') . "</span>" ;
 											}
-										print "</th>" ;
+										$header.="</th>" ;
 									}
 									if ($row2["effort"]=="Y") {
-										print "<th style='text-align: center; width: 30px'>" ;
+										$header.="<th style='text-align: center; width: 30px'>" ;
 											$scale="" ;
 											if ($effortID[$i]!="") {
 												try {
@@ -260,25 +284,63 @@ else {
 													}
 												}
 												$gibbonScaleIDEffort=$rowScale["gibbonScaleID"] ;
-												print "<input name='scaleEffort' id='scaleEffort' value='" . $effortID[$i] . "' type='hidden'>" ;
-												print "<input name='lowestAcceptableEffort' id='lowestAcceptableEffort' value='" . $rowScale["lowestAcceptable"] . "' type='hidden'>" ;
+												$header.="<input name='scaleEffort' id='scaleEffort' value='" . $effortID[$i] . "' type='hidden'>" ;
+												$header.="<input name='lowestAcceptableEffort' id='lowestAcceptableEffort' value='" . $rowScale["lowestAcceptable"] . "' type='hidden'>" ;
 											}
 											if ($effortAlternativeName!="" AND $effortAlternativeNameAbrev!="") {
-												print "<span title='" . $effortAlternativeName . htmlPrep($scale) . "'>" . $effortAlternativeNameAbrev . "</span>" ;
+												$header.="<span title='" . $effortAlternativeName . htmlPrep($scale) . "'>" . $effortAlternativeNameAbrev . "</span>" ;
 											}
 											else {
-												print "<span title='" . _('Effort') . htmlPrep($scale) . "'>" . _('Eff') . "</span>" ;
+												$header.="<span title='" . _('Effort') . htmlPrep($scale) . "'>" . _('Eff') . "</span>" ;
 											}
-										print "</th>" ;
+										$header.="</th>" ;
 									}
 									if ($row2["comment"]=="Y" OR $row2["uploadedResponse"]=="Y") {
-										print "<th style='text-align: center; width: 80'>" ;
-											print "<span title='" . _('Comment') . "'>" . _('Com') . "</span>" ;
-										print "</th>" ;
+										$header.="<th style='text-align: center; width: 80'>" ;
+											$header.="<span title='" . _('Comment') . "'>" . _('Com') . "</span>" ;
+										$header.="</th>" ;
 									}
 								}
-							print "</tr>" ;
-					
+							$header.="</tr>" ;
+							
+							?>
+							<tr class='break'>
+								<?php
+								print "<td colspan=" . ($span) . ">" ;
+								?>
+									<h3>Settings</h3>
+								</td>
+							</tr>
+							<tr>
+								<td> 
+									<b><?php print _('Submitted Homework ') ?></b><br/>
+									<?php $row2["gibbonCourseClassID"] ?>
+								</td>
+								<td class="right"  colspan="<?php print $span-1 ?>">
+									<select name="gibbonPlannerEntryID" id="gibbonPlannerEntryID" style="width: 332px">
+										<?php
+										try {
+											$dataSelect=array("gibbonCourseClassID"=>$row2["gibbonCourseClassID"]); 
+											$sqlSelect="SELECT * FROM gibbonPlannerEntry WHERE gibbonCourseClassID=:gibbonCourseClassID AND homeworkSubmission='Y' ORDER BY date DESC, timeStart DESC, name" ;
+											$resultSelect=$connection2->prepare($sqlSelect);
+											$resultSelect->execute($dataSelect);
+										}
+										catch(PDOException $e) { }
+										print "<option value=''></option>" ;
+										while ($rowSelect=$resultSelect->fetch()) {
+											$selected="" ;
+											if ($rowSelect["gibbonPlannerEntryID"]==$row2["gibbonPlannerEntryID"]) {
+												$selected="selected " ;
+											}
+											print "<option $selected class='" . $rowSelect["gibbonUnitID"] . "-" . $rowSelect["gibbonHookID"] . "' value='" . $rowSelect["gibbonPlannerEntryID"] . "'>" . htmlPrep($rowSelect["name"]) . "</option>" ;
+										}		
+										?>				
+									</select>
+								</td>
+							</tr>
+							
+							<?php
+							print $header ;
 							$count=0;
 							$rowNum="odd" ;
 							try {
@@ -332,7 +394,7 @@ else {
 											if ($submission==TRUE) {
 												print "<td style='text-align: left ; width: 40px'>" ;
 													try {
-														$dataWork=array("gibbonPlannerEntryID"=>$row2["gibbonPlannerEntryID"], "gibbonPersonID"=>$rowStudents["gibbonPersonID"]); 
+														$dataWork=array("gibbonPlannerEntryID"=>$row2["gibbonPlannerEntryID"], "gibbonPersonID"=>$rowEntry["gibbonPersonIDStudent"]); 
 														$sqlWork="SELECT * FROM gibbonPlannerEntryHomework WHERE gibbonPlannerEntryID=:gibbonPlannerEntryID AND gibbonPersonID=:gibbonPersonID ORDER BY count DESC" ;
 														$resultWork=$connection2->prepare($sqlWork);
 														$resultWork->execute($dataWork);
@@ -499,11 +561,9 @@ else {
 								</td>
 							</tr>
 							<tr>
-								<?php
-								print "<td>" ;
-								?>
+								<td>
 									<b><?php print _('Go Live Date') ?></b><br/>
-								<span style="font-size: 90%"><i><?php print _('1. Format') ?> <?php if ($_SESSION[$guid]["i18n"]["dateFormat"]=="") { print "dd/mm/yyyy" ; } else { print $_SESSION[$guid]["i18n"]["dateFormat"] ; }?><br/><?php print _('2. Column is hidden until date is reached.') ?></i></span>
+									<span style="font-size: 90%"><i><?php print _('1. Format') ?> <?php if ($_SESSION[$guid]["i18n"]["dateFormat"]=="") { print "dd/mm/yyyy" ; } else { print $_SESSION[$guid]["i18n"]["dateFormat"] ; }?><br/><?php print _('2. Column is hidden until date is reached.') ?></i></span>
 								</td>
 								<td class="right" colspan="<?php print $span-1 ?>">
 									<input name="completeDate" id="completeDate" maxlength=10 value="<?php print dateConvertBack($guid, $row2["completeDate"]) ?>" type="text" style="width: 300px">

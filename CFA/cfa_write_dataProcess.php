@@ -88,6 +88,10 @@ else {
 				$gibbonScaleIDEffort=$row["gibbonScaleIDEffort"] ;
 				$comment=$row["comment"] ;
 				$uploadedResponse=$row["uploadedResponse"] ;
+				$gibbonPlannerEntryID=NULL ;
+				if ($_POST["gibbonPlannerEntryID"]!="") {
+					$gibbonPlannerEntryID=$_POST["gibbonPlannerEntryID"] ;
+				}
 				
 				for ($i=1;$i<=$count;$i++) {
 					$gibbonPersonIDStudent=$_POST["$i-gibbonPersonID"] ;
@@ -277,8 +281,8 @@ else {
 					$complete="Y" ;
 				}
 				try {
-					$data=array("completeDate"=>$completeDate, "complete"=>$complete, "cfaColumnID"=>$cfaColumnID); 
-					$sql="UPDATE cfaColumn SET completeDate=:completeDate, complete=:complete WHERE cfaColumnID=:cfaColumnID" ;
+					$data=array("gibbonPlannerEntryID"=>$gibbonPlannerEntryID, "completeDate"=>$completeDate, "complete"=>$complete, "cfaColumnID"=>$cfaColumnID); 
+					$sql="UPDATE cfaColumn SET gibbonPlannerEntryID=:gibbonPlannerEntryID, completeDate=:completeDate, complete=:complete WHERE cfaColumnID=:cfaColumnID" ;
 					$result=$connection2->prepare($sql);
 					$result->execute($data);
 				}

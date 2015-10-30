@@ -51,7 +51,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 			//Get and output CFAs
 			try {
 				$dataCFA=array("gibbonPersonID1"=>$gibbonPersonID, "gibbonPersonID2"=>$gibbonPersonID, "gibbonSchoolYearID"=>$rowYears["gibbonSchoolYearID"]); 
-				$sqlCFA="SELECT cfaColumn.*, cfaEntry.*, gibbonCourse.nameShort AS course, gibbonCourseClass.nameShort AS class FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourseClass.gibbonCourseID=gibbonCourse.gibbonCourseID) JOIN gibbonCourseClassPerson ON (gibbonCourseClassPerson.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) JOIN cfaColumn ON (cfaColumn.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) JOIN cfaEntry ON (cfaEntry.cfaColumnID=cfaColumn.cfaColumnID) WHERE gibbonCourseClassPerson.gibbonPersonID=:gibbonPersonID1 AND cfaEntry.gibbonPersonIDStudent=:gibbonPersonID2 AND gibbonSchoolYearID=:gibbonSchoolYearID AND completeDate<='" . date("Y-m-d") . "' ORDER BY completeDate DESC, gibbonCourse.nameShort, gibbonCourseClass.nameShort" ;
+				$sqlCFA="SELECT cfaColumn.*, cfaEntry.*, gibbonCourse.nameShort AS course, gibbonCourseClass.nameShort AS class, gibbonPerson.dateStart FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourseClass.gibbonCourseID=gibbonCourse.gibbonCourseID) JOIN gibbonCourseClassPerson ON (gibbonCourseClassPerson.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) JOIN cfaColumn ON (cfaColumn.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) JOIN cfaEntry ON (cfaEntry.cfaColumnID=cfaColumn.cfaColumnID) JOIN gibbonPerson ON (cfaEntry.gibbonPersonIDStudent=gibbonPerson.gibbonPersonID) WHERE gibbonCourseClassPerson.gibbonPersonID=:gibbonPersonID1 AND cfaEntry.gibbonPersonIDStudent=:gibbonPersonID2 AND gibbonSchoolYearID=:gibbonSchoolYearID AND completeDate<='" . date("Y-m-d") . "' ORDER BY completeDate DESC, gibbonCourse.nameShort, gibbonCourseClass.nameShort" ;
 				$resultCFA=$connection2->prepare($sqlCFA);
 				$resultCFA->execute($dataCFA);
 			}
@@ -77,6 +77,9 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 						$output.="</th>" ;
 						$output.="<th>" ;
 							$output.="Comment" ;
+						$output.="</th>" ;
+						$output.="<th style='width: 75px'>" ;
+							$output.=_("Submission") ;
 						$output.="</th>" ;
 						
 					$output.="</tr>" ;
@@ -186,9 +189,9 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 							}
 							
 							if ($rowCFA["comment"]=="N" AND $rowCFA["uploadedResponse"]=="N") {
-								print "<td class='dull' style='color: #bbb; text-align: left'>" ;
-									print _('N/A') ;
-								print "</td>" ;
+								$output.="<td class='dull' style='color: #bbb; text-align: left'>" ;
+									$output.=_('N/A') ;
+								$output.="</td>" ;
 							}
 							else {
 								$output.="<td>" ;
@@ -199,6 +202,94 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 										$output.="<a title='" . _('Uploaded Response') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowCFA["response"] . "'>" . _('Uploaded Response') . "</a><br/>" ;
 									}
 								$output.="</td>" ;
+							}
+							
+							if ($rowCFA["gibbonPlannerEntryID"]==0) {
+								$output.="<td class='dull' style='color: #bbb; text-align: left'>" ;
+									$output.=_('N/A') ;
+								$output.="</td>" ;
+							}
+							else {
+								try {
+									$dataSub=array("gibbonPlannerEntryID"=>$rowCFA["gibbonPlannerEntryID"]); 
+									$sqlSub="SELECT * FROM gibbonPlannerEntry WHERE gibbonPlannerEntryID=:gibbonPlannerEntryID AND homeworkSubmission='Y'" ;
+									$resultSub=$connection2->prepare($sqlSub);
+									$resultSub->execute($dataSub);
+								}
+								catch(PDOException $e) { 
+									$output.="<div class='error'>" . $e->getMessage() . "</div>" ; 
+								}
+								if ($resultSub->rowCount()!=1) {
+									$output.="<td class='dull' style='color: #bbb; text-align: left'>" ;
+										$output.=_('N/A') ;
+									$output.="</td>" ;
+								}
+								else {
+									$output.="<td>" ;
+										$rowSub=$resultSub->fetch() ;
+										
+										try {
+											$dataWork=array("gibbonPlannerEntryID"=>$rowCFA["gibbonPlannerEntryID"], "gibbonPersonID"=>$gibbonPersonID); 
+											$sqlWork="SELECT * FROM gibbonPlannerEntryHomework WHERE gibbonPlannerEntryID=:gibbonPlannerEntryID AND gibbonPersonID=:gibbonPersonID ORDER BY count DESC" ;
+											$resultWork=$connection2->prepare($sqlWork);
+											$resultWork->execute($dataWork);
+										}
+										catch(PDOException $e) { 
+											$output.="<div class='error'>" . $e->getMessage() . "</div>" ; 
+										}
+										if ($resultWork->rowCount()>0) {
+											$rowWork=$resultWork->fetch() ;
+											
+											if ($rowWork["status"]=="Exemption") {
+												$linkText=_("Exemption") ;
+											}
+											else if ($rowWork["version"]=="Final") {
+												$linkText=_("Final") ;
+											}
+											else {
+												$linkText=_("Draft") . " " . $rowWork["count"] ;
+											}
+											
+											$style="" ;
+											$status="On Time" ;
+											if ($rowWork["status"]=="Exemption") {
+												$status=_("Exemption") ;
+											}
+											else if ($rowWork["status"]=="Late") {
+												$style="style='color: #ff0000; font-weight: bold; border: 2px solid #ff0000; padding: 2px 4px'" ;
+												$status=_("Late") ;
+											}
+											
+											if ($rowWork["type"]=="File") {
+												$output.="<span title='" . $rowWork["version"] . ". $status. " . sprintf(_('Submitted at %1$s on %2$s'), substr($rowWork["timestamp"],11,5), dateConvertBack($guid, substr($rowWork["timestamp"],0,10))) . "' $style><a href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowWork["location"] ."'>$linkText</a></span>" ;
+											}
+											else if ($rowWork["type"]=="Link") {
+												$output.="<span title='" . $rowWork["version"] . ". $status. " . sprintf(_('Submitted at %1$s on %2$s'), substr($rowWork["timestamp"],11,5), dateConvertBack($guid, substr($rowWork["timestamp"],0,10))) . "' $style><a target='_blank' href='" . $rowWork["location"] ."'>$linkText</a></span>" ;
+											}
+											else {
+												$output.="<span title='$status. " . sprintf(_('Recorded at %1$s on %2$s'), substr($rowWork["timestamp"],11,5), dateConvertBack($guid, substr($rowWork["timestamp"],0,10))) . "' $style>$linkText</span>" ;
+											}
+										}
+										else {
+											if (date("Y-m-d H:i:s")<$rowSub["homeworkDueDateTime"]) {
+												$output.="<span title='Pending'>" . _('Pending') . "</span>" ;
+											}
+											else {
+												if ($rowCFA["dateStart"]>$rowSub["date"]) {
+													$output.="<span title='" . _('Student joined school after assessment was given.') . "' style='color: #000; font-weight: normal; border: 2px none #ff0000; padding: 2px 4px'>" . _('NA') . "</span>" ;
+												}
+												else {
+													if ($rowSub["homeworkSubmissionRequired"]=="Compulsory") {
+														$output.="<div style='color: #ff0000; font-weight: bold; border: 2px solid #ff0000; padding: 2px 4px; margin: 2px 0px'>" . _('Incomplete') . "</div>" ;
+													}
+													else {
+														$output.=_("Not submitted online") ;
+													}
+												}
+											}
+										}	
+									$output.="</td>" ;
+								}
 							}
 						$output.="</tr>" ;
 					}

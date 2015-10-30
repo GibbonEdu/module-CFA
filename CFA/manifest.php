@@ -25,7 +25,7 @@ $description="The CFA module allows schools to run a program of Common Formative
 $entryURL="cfa_write.php" ;
 $type="Additional" ;
 $category="Assess" ;
-$version="1.2.00" ;
+$version="1.3.00" ;
 $author="Ross Parker" ;
 $url="http://rossparker.org" ;
 
@@ -45,6 +45,7 @@ $moduleTables[0]="CREATE TABLE `cfaColumn` (
   `gibbonRubricIDEffort` int(8) unsigned zerofill DEFAULT NULL,
   `comment` enum('Y','N') NOT NULL DEFAULT 'Y',
   `uploadedResponse` enum('N','Y') NOT NULL DEFAULT 'N',
+  `gibbonPlannerEntryID` int(14) unsigned zerofill DEFAULT NULL,
   `complete` enum('N','Y') NOT NULL,
   `completeDate` date DEFAULT NULL,
   `gibbonPersonIDCreator` int(10) unsigned zerofill NOT NULL,
@@ -182,7 +183,6 @@ $actionRows[6]["categoryPermissionStudent"]="N" ;
 $actionRows[6]["categoryPermissionParent"]="N" ;
 $actionRows[6]["categoryPermissionOther"]="N" ;
 
-$array=array() ;
 $array=array() ;
 $array["sourceModuleName"]="CFA" ;
 $array["sourceModuleAction"]="View CFAs_all" ;

@@ -326,12 +326,35 @@ else {
 										$comment[$i]=$row["comment"];
 										$uploadedResponse[$i]=$row["uploadedResponse"];
 										$submission[$i]=FALSE ;
+												
+										//WORK OUT IF THERE IS SUBMISSION
+										if (is_null($row["gibbonPlannerEntryID"])==FALSE) {
+											try {
+												$dataSub=array("gibbonPlannerEntryID"=>$row["gibbonPlannerEntryID"]); 
+												$sqlSub="SELECT * FROM gibbonPlannerEntry WHERE gibbonPlannerEntryID=:gibbonPlannerEntryID AND homeworkSubmission='Y'" ;
+												$resultSub=$connection2->prepare($sqlSub);
+												$resultSub->execute($dataSub);
+											}
+											catch(PDOException $e) { 
+												print "<div class='error'>" . $e->getMessage() . "</div>" ; 
+											}
+
+											if ($resultSub->rowCount()==1) {
+												$submission[$i]=TRUE ;
+												$rowSub=$resultSub->fetch() ;
+												$homeworkDueDateTime[$i]=$rowSub["homeworkDueDateTime"] ;
+												$lessonDate[$i]=$rowSub["date"] ;
+											}
+										}
 									}
 								
 									
 									//Column count
 									$span=0 ;
 									$contents=TRUE ;
+									if ($submission[$i]==TRUE) {
+										$span++ ;
+									}
 									if ($attainmentOn[$i]=="Y" AND ($attainmentID[$i]!="" OR $gibbonRubricIDAttainment[$i]!="")) {
 										$span++ ;
 									}
@@ -457,6 +480,18 @@ else {
 												print "<span title='" . _('Uploaded Response') . "'>" . _('Upl') . "</span>" ;
 											print "</th>" ;
 										}
+										if (isset($submission[$i])) {
+											if ($submission[$i]==TRUE) {
+												$leftBorderStyle='' ;
+												if ($leftBorder==FALSE) {
+													$leftBorder=TRUE ;
+													$leftBorderStyle="border-left: 2px solid #666;" ;
+												}
+												print "<th style='$leftBorderStyle text-align: center; width: 30px'>" ;
+													print "<span title='" . _('Submitted Work') . "'>" . _('Sub') . "</span>" ;
+												print "</th>" ;
+											}
+										}
 									}
 								}
 							print "</tr>" ;
@@ -518,7 +553,7 @@ else {
 										$row=$result->fetch() ;
 											try {
 												$dataEntry=array("cfaColumnID"=>$columnID[($i)], "gibbonPersonIDStudent"=>$rowStudents["gibbonPersonID"]); 
-												$sqlEntry="SELECT * FROM cfaEntry WHERE cfaColumnID=:cfaColumnID AND gibbonPersonIDStudent=:gibbonPersonIDStudent" ;
+												$sqlEntry="SELECT cfaEntry.*, cfaColumn.gibbonPlannerEntryID FROM cfaEntry JOIN cfaColumn ON (cfaEntry.cfaColumnID=cfaColumn.cfaColumnID) WHERE cfaEntry.cfaColumnID=:cfaColumnID AND gibbonPersonIDStudent=:gibbonPersonIDStudent" ;
 												$resultEntry=$connection2->prepare($sqlEntry);
 												$resultEntry->execute($dataEntry);
 											}
@@ -651,7 +686,7 @@ else {
 													}
 													print "<td style='$leftBorderStyle text-align: center;'>" ;
 														try {
-															$dataWork=array("gibbonPlannerEntryID"=>$gibbonPlannerEntryID[$i], "gibbonPersonID"=>$rowStudents["gibbonPersonID"]); 
+															$dataWork=array("gibbonPlannerEntryID"=>$rowEntry["gibbonPlannerEntryID"], "gibbonPersonID"=>$rowStudents["gibbonPersonID"]); 
 															$sqlWork="SELECT * FROM gibbonPlannerEntryHomework WHERE gibbonPlannerEntryID=:gibbonPlannerEntryID AND gibbonPersonID=:gibbonPersonID ORDER BY count DESC" ;
 															$resultWork=$connection2->prepare($sqlWork);
 															$resultWork->execute($dataWork);
