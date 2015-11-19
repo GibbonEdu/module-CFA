@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+v1.4.00
+-------
+Added CLI script to notify staff and students of CFA columns that have met their live date for their classes
+
 v1.3.00
 -------
 Added ability for a teacher to tie column to a lesson, to enable seeing submitted work

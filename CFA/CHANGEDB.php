@@ -33,5 +33,8 @@ $sql[$count][1]="
 ALTER TABLE `cfaColumn` ADD `gibbonPlannerEntryID` INT(14) UNSIGNED ZEROFILL NULL DEFAULT NULL AFTER `uploadedResponse`;end
 " ;
 
+//v1.4.00
+$sql[$count][0]="1.4.00" ;
+$sql[$count][1]="" ;
 
 ?>
