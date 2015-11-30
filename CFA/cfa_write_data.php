@@ -54,11 +54,11 @@ else {
 			try {
 				if ($highestAction=="Write CFAs_all") {
 					$data=array("gibbonCourseClassID"=>$gibbonCourseClassID); 
-					$sql="SELECT gibbonCourse.nameShort AS course, gibbonCourse.name AS courseName, gibbonCourseClass.nameShort AS class, gibbonYearGroupIDList FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourse.gibbonCourseID=gibbonCourseClass.gibbonCourseID) WHERE gibbonCourseClassID=:gibbonCourseClassID" ;
+					$sql="SELECT gibbonCourse.nameShort AS course, gibbonCourse.name AS courseName, gibbonCourseClass.nameShort AS class, gibbonYearGroupIDList FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourse.gibbonCourseID=gibbonCourseClass.gibbonCourseID) WHERE gibbonCourseClassID=:gibbonCourseClassID AND gibbonCourseClass.reportable='Y' " ;
 				}
 				else {
 					$data=array("gibbonCourseClassID"=>$gibbonCourseClassID, "gibbonPersonID"=>$_SESSION[$guid]["gibbonPersonID"]); 
-					$sql="SELECT gibbonCourse.nameShort AS course, gibbonCourse.name AS courseName, gibbonCourseClass.nameShort AS class, gibbonYearGroupIDList FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourse.gibbonCourseID=gibbonCourseClass.gibbonCourseID) JOIN gibbonCourseClassPerson ON (gibbonCourseClassPerson.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) WHERE gibbonCourseClass.gibbonCourseClassID=:gibbonCourseClassID AND gibbonPersonID=:gibbonPersonID AND role='Teacher'" ;
+					$sql="SELECT gibbonCourse.nameShort AS course, gibbonCourse.name AS courseName, gibbonCourseClass.nameShort AS class, gibbonYearGroupIDList FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourse.gibbonCourseID=gibbonCourseClass.gibbonCourseID) JOIN gibbonCourseClassPerson ON (gibbonCourseClassPerson.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) WHERE gibbonCourseClass.gibbonCourseClassID=:gibbonCourseClassID AND gibbonPersonID=:gibbonPersonID AND role='Teacher' AND gibbonCourseClass.reportable='Y' " ;
 				}
 				$result=$connection2->prepare($sql);
 				$result->execute($data);
@@ -252,9 +252,9 @@ else {
 														$scale=$scale . ": " . $rowScale["usage"] ;
 													}
 												}
-												$gibbonScaleIDAttainment=$rowScale["gibbonScaleID"] ;
+												@$gibbonScaleIDAttainment=$rowScale["gibbonScaleID"] ;
 												$header.="<input name='scaleAttainment' id='scaleAttainment' value='" . $attainmentID[$i] . "' type='hidden'>" ;
-												$header.="<input name='lowestAcceptableAttainment' id='lowestAcceptableAttainment' value='" . $rowScale["lowestAcceptable"] . "' type='hidden'>" ;
+												$header.="<input name='lowestAcceptableAttainment' id='lowestAcceptableAttainment' value='" . @$rowScale["lowestAcceptable"] . "' type='hidden'>" ;
 											}
 											if ($attainmentAlternativeName!="" AND $attainmentAlternativeNameAbrev!="") {
 												$header.="<span title='" . $attainmentAlternativeName . htmlPrep($scale) . "'>" . $attainmentAlternativeNameAbrev . "</span>" ;
@@ -345,7 +345,7 @@ else {
 							$rowNum="odd" ;
 							try {
 								$dataStudents=array("gibbonCourseClassID"=>$gibbonCourseClassID); 
-								$sqlStudents="SELECT title, surname, preferredName, gibbonPerson.gibbonPersonID, dateStart FROM gibbonCourseClassPerson JOIN gibbonPerson ON (gibbonCourseClassPerson.gibbonPersonID=gibbonPerson.gibbonPersonID) WHERE role='Student' AND gibbonCourseClassID=:gibbonCourseClassID AND status='Full' AND (dateStart IS NULL OR dateStart<='" . date("Y-m-d") . "') AND (dateEnd IS NULL  OR dateEnd>='" . date("Y-m-d") . "') ORDER BY surname, preferredName" ;
+								$sqlStudents="SELECT title, surname, preferredName, gibbonPerson.gibbonPersonID, dateStart FROM gibbonCourseClassPerson JOIN gibbonPerson ON (gibbonCourseClassPerson.gibbonPersonID=gibbonPerson.gibbonPersonID) WHERE role='Student' AND gibbonCourseClassID=:gibbonCourseClassID AND status='Full' AND (dateStart IS NULL OR dateStart<='" . date("Y-m-d") . "') AND (dateEnd IS NULL  OR dateEnd>='" . date("Y-m-d") . "') AND gibbonCourseClassPerson.reportable='Y'  ORDER BY surname, preferredName" ;
 								$resultStudents=$connection2->prepare($sqlStudents);
 								$resultStudents->execute($dataStudents);
 							}

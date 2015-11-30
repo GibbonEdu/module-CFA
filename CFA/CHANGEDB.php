@@ -10,6 +10,7 @@ $sql[$count][1]="" ;
 
 
 //v1.1.00
+$count++ ;
 $sql[$count][0]="1.1.00" ;
 $sql[$count][1]="ALTER TABLE `cfaColumn` ADD `uploadedResponse` ENUM('N','Y') NOT NULL DEFAULT 'N' AFTER `comment`;end
 ALTER TABLE `cfaEntry` ADD `response` TEXT NOT NULL AFTER `comment`;end
@@ -17,10 +18,12 @@ ALTER TABLE `cfaEntry` CHANGE `response` `response` TEXT CHARACTER SET utf8 COLL
 " ;
 
 //v1.1.01
+$count++ ;
 $sql[$count][0]="1.1.01" ;
 $sql[$count][1]="" ;
 
 //v1.2.00
+$count++ ;
 $sql[$count][0]="1.2.00" ;
 $sql[$count][1]="
 UPDATE gibbonAction SET name='Manage CFAs_all', precedence=1 WHERE name='Manage CFAs' AND gibbonModuleID=(SELECT gibbonModuleID FROM gibbonModule WHERE name='CFA');end
@@ -28,13 +31,20 @@ INSERT INTO `gibbonAction` (`gibbonModuleID`, `name`, `precedence`, `category`, 
 " ;
 
 //v1.3.00
+$count++ ;
 $sql[$count][0]="1.3.00" ;
 $sql[$count][1]="
 ALTER TABLE `cfaColumn` ADD `gibbonPlannerEntryID` INT(14) UNSIGNED ZEROFILL NULL DEFAULT NULL AFTER `uploadedResponse`;end
 " ;
 
 //v1.4.00
+$count++ ;
 $sql[$count][0]="1.4.00" ;
+$sql[$count][1]="" ;
+
+//v1.4.00
+$count++ ;
+$sql[$count][0]="1.4.01" ;
 $sql[$count][1]="" ;
 
 ?>

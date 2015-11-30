@@ -28,6 +28,20 @@ $attainmentAlternativeNameAbrev=getSettingByScope($connection2, "Markbook", "att
 $effortAlternativeName=getSettingByScope($connection2, "Markbook", "effortAlternativeName") ;
 $effortAlternativeNameAbrev=getSettingByScope($connection2, "Markbook", "effortAlternativeNameAbrev") ;
 
+//Get gibbonHookID
+$gibbonHookID=NULL ;
+try {
+	$data=array(); 
+	$sql="SELECT gibbonHookID FROM gibbonHook WHERE type='Student Profile' AND name='CFA'" ;
+	$result=$connection2->prepare($sql);
+	$result->execute($data);
+}
+catch(PDOException $e) { }
+if ($result->rowCount()==1) {
+	$row=$result->fetch() ;
+	$gibbonHookID=$row["gibbonHookID"] ;
+}
+						
 if (isActionAccessible($guid, $connection2, "/modules/CFA/cfa_write.php")==FALSE) {
 	//Acess denied
 	print "<div class='error'>" ;
@@ -79,11 +93,11 @@ else {
 			try {
 				if ($highestAction=="Write CFAs_all") {
 					$data=array("gibbonCourseClassID"=>$gibbonCourseClassID); 
-					$sql="SELECT gibbonCourse.nameShort AS course, gibbonCourse.name AS courseName, gibbonCourseClass.nameShort AS class, gibbonYearGroupIDList FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourse.gibbonCourseID=gibbonCourseClass.gibbonCourseID) WHERE gibbonCourseClassID=:gibbonCourseClassID" ;
+					$sql="SELECT gibbonCourse.nameShort AS course, gibbonCourse.name AS courseName, gibbonCourseClass.nameShort AS class, gibbonYearGroupIDList FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourse.gibbonCourseID=gibbonCourseClass.gibbonCourseID) WHERE gibbonCourseClassID=:gibbonCourseClassID AND gibbonCourseClass.reportable='Y' " ;
 				}
 				else {
 					$data=array("gibbonCourseClassID"=>$gibbonCourseClassID, "gibbonPersonID"=>$_SESSION[$guid]["gibbonPersonID"]); 
-					$sql="SELECT gibbonCourse.nameShort AS course, gibbonCourse.name AS courseName, gibbonCourseClass.nameShort AS class, gibbonYearGroupIDList FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourse.gibbonCourseID=gibbonCourseClass.gibbonCourseID) JOIN gibbonCourseClassPerson ON (gibbonCourseClassPerson.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) WHERE gibbonCourseClass.gibbonCourseClassID=:gibbonCourseClassID AND gibbonPersonID=:gibbonPersonID AND role='Teacher'" ;
+					$sql="SELECT gibbonCourse.nameShort AS course, gibbonCourse.name AS courseName, gibbonCourseClass.nameShort AS class, gibbonYearGroupIDList FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourse.gibbonCourseID=gibbonCourseClass.gibbonCourseID) JOIN gibbonCourseClassPerson ON (gibbonCourseClassPerson.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) WHERE gibbonCourseClass.gibbonCourseClassID=:gibbonCourseClassID AND gibbonPersonID=:gibbonPersonID AND role='Teacher' AND gibbonCourseClass.reportable='Y' " ;
 				}
 				$result=$connection2->prepare($sql);
 				$result->execute($data);
@@ -501,7 +515,7 @@ else {
 					
 						try {
 							$dataStudents=array("gibbonCourseClassID"=>$gibbonCourseClassID); 
-							$sqlStudents="SELECT title, surname, preferredName, gibbonPerson.gibbonPersonID, dateStart FROM gibbonCourseClassPerson JOIN gibbonPerson ON (gibbonCourseClassPerson.gibbonPersonID=gibbonPerson.gibbonPersonID) WHERE role='Student' AND gibbonCourseClassID=:gibbonCourseClassID AND status='Full' AND (dateStart IS NULL OR dateStart<='" . date("Y-m-d") . "') AND (dateEnd IS NULL  OR dateEnd>='" . date("Y-m-d") . "') ORDER BY surname, preferredName" ;
+							$sqlStudents="SELECT title, surname, preferredName, gibbonPerson.gibbonPersonID, dateStart FROM gibbonCourseClassPerson JOIN gibbonPerson ON (gibbonCourseClassPerson.gibbonPersonID=gibbonPerson.gibbonPersonID) WHERE role='Student' AND gibbonCourseClassID=:gibbonCourseClassID AND status='Full' AND (dateStart IS NULL OR dateStart<='" . date("Y-m-d") . "') AND (dateEnd IS NULL  OR dateEnd>='" . date("Y-m-d") . "') AND gibbonCourseClassPerson.reportable='Y'  ORDER BY surname, preferredName" ;
 							$resultStudents=$connection2->prepare($sqlStudents);
 							$resultStudents->execute($dataStudents);
 						}
@@ -528,7 +542,7 @@ else {
 								//COLOR ROW BY STATUS!
 								print "<tr class=$rowNum>" ;
 									print "<td>" ;
-										print "<div style='padding: 2px 0px'><b><a href='index.php?q=/modules/Students/student_view_details.php&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&subpage=Markbook#" . $gibbonCourseClassID . "'>" . formatName("", $rowStudents["preferredName"], $rowStudents["surname"], "Student", true) . "</a><br/></div>" ;
+										print "<div style='padding: 2px 0px'><b><a href='index.php?q=/modules/Students/student_view_details.php&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&hook=CFA&module=CFA&action=$highestAction&gibbonHookID=$gibbonHookID#" . $gibbonCourseClassID . "'>" . formatName("", $rowStudents["preferredName"], $rowStudents["surname"], "Student", true) . "</a><br/></div>" ;
 									print "</td>" ;
 								
 									if ($externalAssessment==TRUE) {

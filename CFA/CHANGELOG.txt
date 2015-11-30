@@ -2,6 +2,10 @@ CHANGELOG
 =========
 v1.4.00
 -------
+Applied class and student Reportable field to CFA listings
+
+v1.4.00
+-------
 Added CLI script to notify staff and students of CFA columns that have met their live date for their classes
 
 v1.3.00
