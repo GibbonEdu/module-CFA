@@ -1,6 +1,10 @@
 CHANGELOG
 =========
-v1.4.00
+v1.4.02
+-------
+Fixed file field gigantism issue
+
+v1.4.01
 -------
 Applied class and student Reportable field to CFA listings
 
