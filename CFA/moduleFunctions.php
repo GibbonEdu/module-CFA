@@ -51,7 +51,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 			//Get and output CFAs
 			try {
 				$dataCFA=array("gibbonPersonID1"=>$gibbonPersonID, "gibbonPersonID2"=>$gibbonPersonID, "gibbonSchoolYearID"=>$rowYears["gibbonSchoolYearID"]); 
-				$sqlCFA="SELECT cfaColumn.*, cfaEntry.*, gibbonCourse.nameShort AS course, gibbonCourseClass.nameShort AS class, gibbonPerson.dateStart FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourseClass.gibbonCourseID=gibbonCourse.gibbonCourseID) JOIN gibbonCourseClassPerson ON (gibbonCourseClassPerson.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) JOIN cfaColumn ON (cfaColumn.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) JOIN cfaEntry ON (cfaEntry.cfaColumnID=cfaColumn.cfaColumnID) JOIN gibbonPerson ON (cfaEntry.gibbonPersonIDStudent=gibbonPerson.gibbonPersonID) WHERE gibbonCourseClassPerson.gibbonPersonID=:gibbonPersonID1 AND cfaEntry.gibbonPersonIDStudent=:gibbonPersonID2 AND gibbonSchoolYearID=:gibbonSchoolYearID AND completeDate<='" . date("Y-m-d") . "' AND gibbonCourseClass.reportable='Y' AND gibbonCourseClassPerson.reportable='Y' ORDER BY completeDate DESC, gibbonCourse.nameShort, gibbonCourseClass.nameShort" ;
+				$sqlCFA="SELECT cfaColumn.*, cfaEntry.*, gibbonCourse.name AS course, gibbonCourseClass.nameShort AS class, gibbonPerson.dateStart FROM gibbonCourse JOIN gibbonCourseClass ON (gibbonCourseClass.gibbonCourseID=gibbonCourse.gibbonCourseID) JOIN gibbonCourseClassPerson ON (gibbonCourseClassPerson.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) JOIN cfaColumn ON (cfaColumn.gibbonCourseClassID=gibbonCourseClass.gibbonCourseClassID) JOIN cfaEntry ON (cfaEntry.cfaColumnID=cfaColumn.cfaColumnID) JOIN gibbonPerson ON (cfaEntry.gibbonPersonIDStudent=gibbonPerson.gibbonPersonID) WHERE gibbonCourseClassPerson.gibbonPersonID=:gibbonPersonID1 AND cfaEntry.gibbonPersonIDStudent=:gibbonPersonID2 AND gibbonSchoolYearID=:gibbonSchoolYearID AND completeDate<='" . date("Y-m-d") . "' AND gibbonCourseClass.reportable='Y' AND gibbonCourseClassPerson.reportable='Y' ORDER BY completeDate DESC, gibbonCourse.nameShort, gibbonCourseClass.nameShort" ;
 				$resultCFA=$connection2->prepare($sqlCFA);
 				$resultCFA->execute($dataCFA);
 			}
@@ -96,7 +96,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 						
 						$output.="<tr class=$rowNum>" ;
 							$output.="<td>" ;
-								$output.="<span title='" . htmlPrep($rowCFA["description"]) . "'><b><u>" . $rowCFA["course"] . "." . $rowCFA["class"] . " " . $rowCFA["name"] . "</u></b></span><br/>" ;
+								$output.="<span title='" . htmlPrep($rowCFA["description"]) . "'><b><u>" . $rowCFA["course"] . "<br/>" . $rowCFA["name"] . "</u></b></span><br/>" ;
 								$output.="<span style='font-size: 90%; font-style: italic; font-weight: normal'>" ;
 								if ($rowCFA["completeDate"]!="") {
 									$output.="Marked on " . dateConvertBack($guid, $rowCFA["completeDate"]) . "<br/>" ;
@@ -196,10 +196,10 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 							else {
 								$output.="<td>" ;
 									if ($rowCFA["comment"]!="") {
-										$output.=$rowCFA["comment"] . "<br/>" ;
+										$output.=nl2br($rowCFA["comment"]) . "<br/>" ;
 									}
 									if ($rowCFA["response"]!="") {
-										$output.="<a title='" . _('Uploaded Response') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowCFA["response"] . "'>" . _('Uploaded Response') . "</a><br/>" ;
+										$output.="<br/><a title='" . _('Uploaded Response') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowCFA["response"] . "'>" . _('Uploaded Response') . "</a><br/>" ;
 									}
 								$output.="</td>" ;
 							}
