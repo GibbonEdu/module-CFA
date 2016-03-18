@@ -2,6 +2,10 @@ CHANGELOG
 =========
 v1.4.03
 -------
+v12 compatibility
+
+v1.4.03
+-------
 Minor interface usability improvements
 
 v1.4.02

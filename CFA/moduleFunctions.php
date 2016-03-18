@@ -27,7 +27,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 	$effortAlternativeNameAbrev=getSettingByScope($connection2, "Markbook", "effortAlternativeNameAbrev") ;
 	$showParentAttainmentWarning=getSettingByScope($connection2, "Markbook", "showParentAttainmentWarning" ) ; 
 	$showParentEffortWarning=getSettingByScope($connection2, "Markbook", "showParentEffortWarning" ) ; 
-	$alert=getAlert($connection2, 002) ;	
+	$alert=getAlert($guid, $connection2, 002) ;	
 		
 	//Get school years in reverse order
 	try {
