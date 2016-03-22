@@ -1,6 +1,10 @@
 CHANGELOG
 =========
-v1.4.03
+v1.4.05
+-------
+Fixed autosize issue on textareas
+
+v1.4.04
 -------
 v12 compatibility
 
