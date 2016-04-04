@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+v1.4.06
+-------
+Fixed very long string issue, which caused comment display to go a little haywire
+
 v1.4.05
 -------
 Fixed autosize issue on textareas

@@ -194,7 +194,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 								$output.="</td>" ;
 							}
 							else {
-								$output.="<td>" ;
+								$output.="<td style='word-wrap: break-word; max-width: 350px!important'>" ;
 									if ($rowCFA["comment"]!="") {
 										$output.=nl2br($rowCFA["comment"]) . "<br/>" ;
 									}
