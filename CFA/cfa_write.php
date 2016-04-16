@@ -45,7 +45,7 @@ if ($result->rowCount()==1) {
 if (isActionAccessible($guid, $connection2, "/modules/CFA/cfa_write.php")==FALSE) {
 	//Acess denied
 	print "<div class='error'>" ;
-		print _("Your request failed because you do not have access to this action.") ;
+		print __($guid, "Your request failed because you do not have access to this action.") ;
 	print "</div>" ;
 }
 else {
@@ -53,7 +53,7 @@ else {
 	$highestAction=getHighestGroupedAction($guid, $_GET["q"], $connection2) ;
 	if ($highestAction==FALSE) {
 		print "<div class='error'>" ;
-		print _("The highest grouped action cannot be determined.") ;
+		print __($guid, "The highest grouped action cannot be determined.") ;
 		print "</div>" ;
 	}
 	else {
@@ -82,7 +82,7 @@ else {
 		}
 		if ($gibbonCourseClassID=="") {
 			print "<div class='trail'>" ;
-			print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>" ._('Write CFAs') . "</div>" ;
+			print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . __($guid, "Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . __($guid, getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>" .__($guid, 'Write CFAs') . "</div>" ;
 			print "</div>" ;
 			print "<div class='warning'>" ;
 				print "Use the class listing on the right to choose a CFA to write." ;
@@ -107,10 +107,10 @@ else {
 			}
 			if ($result->rowCount()!=1) {
 				print "<div class='trail'>" ;
-				print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>" . _('Write CFAs') . "</div>" ;
+				print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . __($guid, "Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . __($guid, getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>" . __($guid, 'Write CFAs') . "</div>" ;
 				print "</div>" ;
 				print "<div class='error'>" ;
-					print _("The specified record does not exist or you do not have access to it.") ;
+					print __($guid, "The specified record does not exist or you do not have access to it.") ;
 				print "</div>" ;	
 			}
 			else {
@@ -118,7 +118,7 @@ else {
 				$courseName=$row["courseName"] ;
 				$gibbonYearGroupIDList=$row["gibbonYearGroupIDList"] ;
 				print "<div class='trail'>" ;
-				print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>Write " . $row["course"] . "." . $row["class"] . " CFAs</div>" ;
+				print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . __($guid, "Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . __($guid, getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>Write " . $row["course"] . "." . $row["class"] . " CFAs</div>" ;
 				print "</div>" ;
 				
 				if (isset($_GET["deleteReturn"])) { $deleteReturn=$_GET["deleteReturn"] ; } else { $deleteReturn="" ; }
@@ -126,7 +126,7 @@ else {
 				$class="error" ;
 				if (!($deleteReturn=="")) {
 					if ($deleteReturn=="success0") {
-						$deleteReturnMessage=_("Your request was completed successfully.") ;		
+						$deleteReturnMessage=__($guid, "Your request was completed successfully.") ;		
 						$class="success" ;
 					}
 					print "<div class='$class'>" ;
@@ -148,7 +148,7 @@ else {
 
 				if ($result->rowCount()>0) {
 					print "<h3 style='margin-top: 0px'>" ;
-						print _("Teachers") ;
+						print __($guid, "Teachers") ;
 					print "</h3>" ;	
 					print "<ul>" ;
 						while ($row=$result->fetch()) {
@@ -162,7 +162,7 @@ else {
 				
 				//Print marks
 				print "<h3>" ;
-					print _("Marks") ;
+					print __($guid, "Marks") ;
 				print "</h3>" ;	
 				
 				//Count number of columns
@@ -178,7 +178,7 @@ else {
 				$columns=$result->rowCount() ;
 				if ($columns<1) {
 					print "<div class='warning'>" ;
-						print _("There are no records to display.") ;
+						print __($guid, "There are no records to display.") ;
 					print "</div>" ;
 				}
 				else {
@@ -194,7 +194,7 @@ else {
 			
 					if ($columns<1) {
 						print "<div class='warning'>" ;
-							print _("There are no records to display.") ;
+							print __($guid, "There are no records to display.") ;
 						print "</div>" ;	
 					}
 					else {
@@ -264,26 +264,26 @@ else {
 				
 						//Print table header
 						print "<p>" ;
-							print _("To see more detail on an item (such as a comment or a grade), hover your mouse over it.") ;
+							print __($guid, "To see more detail on an item (such as a comment or a grade), hover your mouse over it.") ;
 							if ($externalAssessment==TRUE) {
-								print " " . _('The Baseline column is populated based on student performance in external assessments, and can be used as a reference point for the grades in the CFA.') ;
+								print " " . __($guid, 'The Baseline column is populated based on student performance in external assessments, and can be used as a reference point for the grades in the CFA.') ;
 							}
 						print "</p>" ;
 					
 						print "<div class='linkTop'>" ;
 							print "<div style='padding-top: 12px; margin-left: 10px; float: right'>" ;
 								if ($x<=0) {
-									print _("Newer") ;
+									print __($guid, "Newer") ;
 								}
 								else {
-									print "<a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/CFA/cfa_write.php&gibbonCourseClassID=$gibbonCourseClassID&page=" . ($x-1) . "'>" . _('Newer') . "</a>" ;
+									print "<a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/CFA/cfa_write.php&gibbonCourseClassID=$gibbonCourseClassID&page=" . ($x-1) . "'>" . __($guid, 'Newer') . "</a>" ;
 								}
 								print " | " ;
 								if ((($x+1)*$columnsPerPage)>=$columns) {
-									print _("Older") ;
+									print __($guid, "Older") ;
 								}
 								else {
-									print "<a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/CFA/cfa_write.php&gibbonCourseClassID=$gibbonCourseClassID&page=" . ($x+1) . "'>" . _('Older') . "</a>" ;
+									print "<a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/CFA/cfa_write.php&gibbonCourseClassID=$gibbonCourseClassID&page=" . ($x+1) . "'>" . __($guid, 'Older') . "</a>" ;
 								}
 							print "</div>" ;
 						print "</div>" ;
@@ -291,15 +291,15 @@ else {
 						print "<table class='mini' cellspacing='0' style='width: 100%; margin-top: 0px'>" ;
 							print "<tr class='head' style='height: 120px'>" ;
 								print "<th style='width: 150px; max-width: 200px'rowspan=2>" ;
-									print _("Student") ;
+									print __($guid, "Student") ;
 								print "</th>" ;
 							
 								//Show Baseline data header
 								if ($externalAssessment==TRUE) {
 									print "<th rowspan=2 style='width: 20px'>" ;
-										$title=_($externalAssessmentFields[2]) . " | " ;
-										$title.=_(substr($externalAssessmentFields[3], (strpos($externalAssessmentFields[3],"_")+1))) . " | " ;
-										$title.=_($externalAssessmentFields[1]) ;
+										$title=__($guid, $externalAssessmentFields[2]) . " | " ;
+										$title.=__($guid, substr($externalAssessmentFields[3], (strpos($externalAssessmentFields[3],"_")+1))) . " | " ;
+										$title.=__($guid, $externalAssessmentFields[1]) ;
 									
 										//Get PAS
 										$PAS=getSettingByScope($connection2, 'System', 'primaryAssessmentScale') ;
@@ -312,11 +312,11 @@ else {
 										catch(PDOException $e) { }
 										if ($resultPAS->rowCount()==1) {
 											$rowPAS=$resultPAS->fetch() ;
-											$title.=" | " . $rowPAS["name"] . " " . _('Scale') . " " ;
+											$title.=" | " . $rowPAS["name"] . " " . __($guid, 'Scale') . " " ;
 										}
 									
 										print "<div style='-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -ms-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg);' title='$title'>" ;
-											print _("Baseline") . "<br/>" ;
+											print __($guid, "Baseline") . "<br/>" ;
 										print "</div>" ;
 									print "</th>" ;
 								}
@@ -389,17 +389,17 @@ else {
 										print "<span title='" . htmlPrep($row["description"]) . "'>" . $row["name"] . "</span><br/>" ;
 										print "<span style='font-size: 90%; font-style: italic; font-weight: normal'>" ;
 										if ($row["completeDate"]!="") {
-											print _("Marked on") . " " . dateConvertBack($guid, $row["completeDate"]) . "<br/>" ;
+											print __($guid, "Marked on") . " " . dateConvertBack($guid, $row["completeDate"]) . "<br/>" ;
 										}
 										else {
-											print _("Unmarked") . "<br/>" ;
+											print __($guid, "Unmarked") . "<br/>" ;
 										}
 										if ($row["attachment"]!="" AND file_exists($_SESSION[$guid]["absolutePath"] . "/" . $row["attachment"])) {
-											print "<a 'title='" . _('Download more information') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $row["attachment"] . "'>More info</a>"; 
+											print "<a 'title='" . __($guid, 'Download more information') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $row["attachment"] . "'>More info</a>"; 
 										}
 										print "</span><br/>" ;
 										if (isActionAccessible($guid, $connection2, "/modules/Markbook/markbook_edit.php")) {
-											print "<a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/CFA/cfa_write_data.php&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=" . $row["cfaColumnID"] . "'><img style='margin-top: 3px' title='" . _('Enter Data') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/markbook.png'/></a> " ;
+											print "<a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/CFA/cfa_write_data.php&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=" . $row["cfaColumnID"] . "'><img style='margin-top: 3px' title='" . __($guid, 'Enter Data') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/markbook.png'/></a> " ;
 										}
 									print "</th>" ;
 								}
@@ -438,7 +438,7 @@ else {
 													print "<span title='" . $attainmentAlternativeName . htmlPrep($scale) . "'>" . $attainmentAlternativeNameAbrev . "</span>" ;
 												}
 												else {
-													print "<span title='" . _('Attainment') . htmlPrep($scale) . "'>" . _('Att') . "</span>" ;
+													print "<span title='" . __($guid, 'Attainment') . htmlPrep($scale) . "'>" . __($guid, 'Att') . "</span>" ;
 												}
 											print "</th>" ;
 										}
@@ -470,7 +470,7 @@ else {
 													print "<span title='" . $effortAlternativeName . htmlPrep($scale) . "'>" . $effortAlternativeNameAbrev . "</span>" ;
 												}
 												else {
-													print "<span title='" . _('Effort') . htmlPrep($scale) . "'>" . _('Eff') . "</span>" ;
+													print "<span title='" . __($guid, 'Effort') . htmlPrep($scale) . "'>" . __($guid, 'Eff') . "</span>" ;
 												}
 											print "</th>" ;
 										}
@@ -481,7 +481,7 @@ else {
 												$leftBorderStyle="border-left: 2px solid #666;" ;
 											}
 											print "<th style='$leftBorderStyle text-align: center; width: 80px'>" ;
-												print "<span title='" . _('Comment') . "'>" . _('Com') . "</span>" ;
+												print "<span title='" . __($guid, 'Comment') . "'>" . __($guid, 'Com') . "</span>" ;
 											print "</th>" ;
 										}
 										if ($uploadedResponse[$i]=="Y") {
@@ -491,7 +491,7 @@ else {
 												$leftBorderStyle="border-left: 2px solid #666;" ;
 											}
 											print "<th style='$leftBorderStyle text-align: center; width: 30px'>" ;
-												print "<span title='" . _('Uploaded Response') . "'>" . _('Upl') . "</span>" ;
+												print "<span title='" . __($guid, 'Uploaded Response') . "'>" . __($guid, 'Upl') . "</span>" ;
 											print "</th>" ;
 										}
 										if (isset($submission[$i])) {
@@ -502,7 +502,7 @@ else {
 													$leftBorderStyle="border-left: 2px solid #666;" ;
 												}
 												print "<th style='$leftBorderStyle text-align: center; width: 30px'>" ;
-													print "<span title='" . _('Submitted Work') . "'>" . _('Sub') . "</span>" ;
+													print "<span title='" . __($guid, 'Submitted Work') . "'>" . __($guid, 'Sub') . "</span>" ;
 												print "</th>" ;
 											}
 										}
@@ -525,7 +525,7 @@ else {
 						if ($resultStudents->rowCount()<1) {
 							print "<tr>" ;
 								print "<td colspan=" . ($columns+1) . ">" ;
-									print "<i>" . _('There are no records to display.') . "</i>" ;
+									print "<i>" . __($guid, 'There are no records to display.') . "</i>" ;
 								print "</td>" ;
 							print "</tr>" ;
 						}
@@ -558,7 +558,7 @@ else {
 											}
 											if ($resultEntry->rowCount()>=1) {
 												$rowEntry=$resultEntry->fetch() ;
-												print "<a title='" . _($rowEntry["descriptor"]) . " | " . _('Test taken on') . " " . dateConvertBack($guid, $rowEntry["date"]) . "' href='index.php?q=/modules/Students/student_view_details.php&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&subpage=External Assessment'>" . _($rowEntry["value"]) . "</a>" ;
+												print "<a title='" . __($guid, $rowEntry["descriptor"]) . " | " . __($guid, 'Test taken on') . " " . dateConvertBack($guid, $rowEntry["date"]) . "' href='index.php?q=/modules/Students/student_view_details.php&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&subpage=External Assessment'>" . __($guid, $rowEntry["value"]) . "</a>" ;
 											}	
 										print "</td>" ;
 									}
@@ -591,18 +591,18 @@ else {
 															}
 															$attainment="" ;
 															if ($rowEntry["attainmentValue"]!="") {
-																$attainment=_($rowEntry["attainmentValue"]) ;
+																$attainment=__($guid, $rowEntry["attainmentValue"]) ;
 															}
 															if ($rowEntry["attainmentValue"]=="Complete") {
-																$attainment=_("Com") ;
+																$attainment=__($guid, "Com") ;
 															}
 															else if ($rowEntry["attainmentValue"]=="Incomplete") {
-																$attainment=_("Inc") ;
+																$attainment=__($guid, "Inc") ;
 															}
 															print "<div $styleAttainment title='" . htmlPrep($rowEntry["attainmentDescriptor"]) . "'>$attainment" ;
 														}
 														if ($gibbonRubricIDAttainment[$i]!="") {
-															print "<a class='thickbox' href='" . $_SESSION[$guid]["absoluteURL"] . "/fullscreen.php?q=/modules/CFA/cfa_write_rubric.php&gibbonRubricID=" . $gibbonRubricIDAttainment[$i] . "&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=" . $columnID[$i] . "&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&mark=FALSE&type=attainment&width=1100&height=550'><img style='margin-bottom: -3px; margin-left: 3px' title='" . _('View Rubric') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/rubric.png'/></a>" ;
+															print "<a class='thickbox' href='" . $_SESSION[$guid]["absoluteURL"] . "/fullscreen.php?q=/modules/CFA/cfa_write_rubric.php&gibbonRubricID=" . $gibbonRubricIDAttainment[$i] . "&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=" . $columnID[$i] . "&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&mark=FALSE&type=attainment&width=1100&height=550'><img style='margin-bottom: -3px; margin-left: 3px' title='" . __($guid, 'View Rubric') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/rubric.png'/></a>" ;
 														}
 														if ($attainmentID[$i]!="") {
 															print "</div>" ;
@@ -624,18 +624,18 @@ else {
 															}
 															$effort="" ;
 															if ($rowEntry["effortValue"]!="") {
-																$effort=_($rowEntry["effortValue"]) ;
+																$effort=__($guid, $rowEntry["effortValue"]) ;
 															}
 															if ($rowEntry["effortValue"]=="Complete") {
-																$effort=_("Com") ;
+																$effort=__($guid, "Com") ;
 															}
 															else if ($rowEntry["effortValue"]=="Incomplete") {
-																$effort=_("Inc") ;
+																$effort=__($guid, "Inc") ;
 															}
 															print "<div $styleEffort title='" . htmlPrep($rowEntry["effortDescriptor"]) . "'>$effort" ;
 														}	
 														if ($gibbonRubricIDEffort[$i]!="") {
-															print "<a class='thickbox' href='" . $_SESSION[$guid]["absoluteURL"] . "/fullscreen.php?q=/modules/CFA/cfa_write_rubric.php&gibbonRubricID=" . $gibbonRubricIDEffort[$i] . "&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=" . $columnID[$i] . "&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&mark=FALSE&type=effort&width=1100&height=550'><img style='margin-bottom: -3px; margin-left: 3px' title='" . _('View Rubric') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/rubric.png'/></a>" ;
+															print "<a class='thickbox' href='" . $_SESSION[$guid]["absoluteURL"] . "/fullscreen.php?q=/modules/CFA/cfa_write_rubric.php&gibbonRubricID=" . $gibbonRubricIDEffort[$i] . "&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=" . $columnID[$i] . "&gibbonPersonID=" . $rowStudents["gibbonPersonID"] . "&mark=FALSE&type=effort&width=1100&height=550'><img style='margin-bottom: -3px; margin-left: 3px' title='" . __($guid, 'View Rubric') . "' src='./themes/" . $_SESSION[$guid]["gibbonThemeName"] . "/img/rubric.png'/></a>" ;
 														}
 														if ($effortID[$i]!="") {
 															print "</div>" ;
@@ -668,7 +668,7 @@ else {
 													}
 													print "<td style='$leftBorderStyle text-align: center;'>" ;
 													if ($rowEntry["response"]!="") {
-														print "<a title='" . _('Uploaded Response') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowEntry["response"] . "'>Up</a><br/>" ;
+														print "<a title='" . __($guid, 'Uploaded Response') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowEntry["response"] . "'>Up</a><br/>" ;
 													}
 												}
 												print "</td>" ;
@@ -712,49 +712,49 @@ else {
 															$rowWork=$resultWork->fetch() ;
 													
 															if ($rowWork["status"]=="Exemption") {
-																$linkText=_("Exe") ;
+																$linkText=__($guid, "Exe") ;
 															}
 															else if ($rowWork["version"]=="Final") {
-																$linkText=_("Fin") ;
+																$linkText=__($guid, "Fin") ;
 															}
 															else {
-																$linkText=_("Dra") . $rowWork["count"] ;
+																$linkText=__($guid, "Dra") . $rowWork["count"] ;
 															}
 													
 															$style="" ;
 															$status="On Time" ;
 																if ($rowWork["status"]=="Exemption") {
-																$status=_("Exemption") ;
+																$status=__($guid, "Exemption") ;
 															}
 															else if ($rowWork["status"]=="Late") {
 																$style="style='color: #ff0000; font-weight: bold; border: 2px solid #ff0000; padding: 2px 4px'" ;
-																$status=_("Late") ;
+																$status=__($guid, "Late") ;
 															}
 													
 															if ($rowWork["type"]=="File") {
-																print "<span title='" . $rowWork["version"] . ". $status. " . _('Submitted at') . " " . substr($rowWork["timestamp"],11,5) . " " . _('on') . " " . dateConvertBack($guid, substr($rowWork["timestamp"],0,10)) . "' $style><a href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowWork["location"] ."'>$linkText</a></span>" ;
+																print "<span title='" . $rowWork["version"] . ". $status. " . __($guid, 'Submitted at') . " " . substr($rowWork["timestamp"],11,5) . " " . __($guid, 'on') . " " . dateConvertBack($guid, substr($rowWork["timestamp"],0,10)) . "' $style><a href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowWork["location"] ."'>$linkText</a></span>" ;
 															}
 															else if ($rowWork["type"]=="Link") {
-																print "<span title='" . $rowWork["version"] . ". $status. " . _('Submitted at') . " " . substr($rowWork["timestamp"],11,5) . " " . _('on') . " " . dateConvertBack($guid, substr($rowWork["timestamp"],0,10)) . "' $style><a target='_blank' href='" . $rowWork["location"] ."'>$linkText</a></span>" ;
+																print "<span title='" . $rowWork["version"] . ". $status. " . __($guid, 'Submitted at') . " " . substr($rowWork["timestamp"],11,5) . " " . __($guid, 'on') . " " . dateConvertBack($guid, substr($rowWork["timestamp"],0,10)) . "' $style><a target='_blank' href='" . $rowWork["location"] ."'>$linkText</a></span>" ;
 															}
 															else {
-																print "<span title='$status. " . _('Recorded at') . " " . substr($rowWork["timestamp"],11,5) . " " . _('on') . " " . dateConvertBack($guid, substr($rowWork["timestamp"],0,10)) . "' $style>$linkText</span>" ;
+																print "<span title='$status. " . __($guid, 'Recorded at') . " " . substr($rowWork["timestamp"],11,5) . " " . __($guid, 'on') . " " . dateConvertBack($guid, substr($rowWork["timestamp"],0,10)) . "' $style>$linkText</span>" ;
 															}
 														}
 														else {
 															if (date("Y-m-d H:i:s")<$homeworkDueDateTime[$i]) {
-																print "<span title='" . _('Pending') . "'>Pen</span>" ;
+																print "<span title='" . __($guid, 'Pending') . "'>Pen</span>" ;
 															}
 															else {
 																if ($rowStudents["dateStart"]>$lessonDate[$i]) {
-																	print "<span title='" . _('Student joined school after assessment was given.') . "' style='color: #000; font-weight: normal; border: 2px none #ff0000; padding: 2px 4px'>" . _('NA') . "</span>" ;
+																	print "<span title='" . __($guid, 'Student joined school after assessment was given.') . "' style='color: #000; font-weight: normal; border: 2px none #ff0000; padding: 2px 4px'>" . __($guid, 'NA') . "</span>" ;
 																}
 																else {
 																	if ($rowSub["homeworkSubmissionRequired"]=="Compulsory") {
-																		print "<span title='" . _('Incomplete') . "' style='color: #ff0000; font-weight: bold; border: 2px solid #ff0000; padding: 2px 4px'>" . _('Inc') . "</span>" ;
+																		print "<span title='" . __($guid, 'Incomplete') . "' style='color: #ff0000; font-weight: bold; border: 2px solid #ff0000; padding: 2px 4px'>" . __($guid, 'Inc') . "</span>" ;
 																	}
 																	else {
-																		print "<span title='" . _('Not submitted online') . "'>" . _('NA') . "</span>" ;
+																		print "<span title='" . __($guid, 'Not submitted online') . "'>" . __($guid, 'NA') . "</span>" ;
 																	}
 																}
 															}

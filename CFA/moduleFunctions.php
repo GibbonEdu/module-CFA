@@ -42,7 +42,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 	
 	if ($resultYears->rowCount()<1) {
 		$output.="<div class='error'>" ;
-			$output.=_("There are no records to display.") ;
+			$output.=__($guid, "There are no records to display.") ;
 		$output.="</div>" ;
 	}
 	else {
@@ -70,16 +70,16 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 							$output.="Assessment" ;
 						$output.="</th>" ;
 						$output.="<th style='width: 75px; text-align: center'>" ;
-							if ($attainmentAlternativeName!="") { $output.=$attainmentAlternativeName ; } else { $output.=_('Attainment') ; }
+							if ($attainmentAlternativeName!="") { $output.=$attainmentAlternativeName ; } else { $output.=__($guid, 'Attainment') ; }
 						$output.="</th>" ;
 						$output.="<th style='width: 75px; text-align: center'>" ;
-							if ($effortAlternativeName!="") { $output.=$effortAlternativeName ; } else { $output.=_('Effort') ; }
+							if ($effortAlternativeName!="") { $output.=$effortAlternativeName ; } else { $output.=__($guid, 'Effort') ; }
 						$output.="</th>" ;
 						$output.="<th>" ;
 							$output.="Comment" ;
 						$output.="</th>" ;
 						$output.="<th style='width: 75px'>" ;
-							$output.=_("Submission") ;
+							$output.=__($guid, "Submission") ;
 						$output.="</th>" ;
 						
 					$output.="</tr>" ;
@@ -111,7 +111,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 							$output.="</td>" ;
 							if ($rowCFA["attainment"]=="N" OR ($rowCFA["gibbonScaleIDAttainment"]=="" AND $rowCFA["gibbonRubricIDAttainment"]=="")) {
 								$output.="<td class='dull' style='color: #bbb; text-align: center'>" ;
-									$output.=_('N/A') ;
+									$output.=__($guid, 'N/A') ;
 								$output.="</td>" ;
 							}
 							else {
@@ -128,7 +128,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 									}
 									if ($resultAttainment->rowCount()==1) {
 										$rowAttainment=$resultAttainment->fetch() ;
-										$attainmentExtra="<br/>" . _($rowAttainment["usage"]) ;
+										$attainmentExtra="<br/>" . __($guid, $rowAttainment["usage"]) ;
 									}
 									$styleAttainment="style='font-weight: bold'" ;
 									if ($rowCFA["attainmentConcern"]=="Y" AND $showParentAttainmentWarning=="Y") {
@@ -143,13 +143,13 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 										}
 									$output.="</div>" ;
 									if ($rowCFA["attainmentValue"]!="") {
-										$output.="<div class='detailItem' style='font-size: 75%; font-style: italic; margin-top: 2px'><b>" . htmlPrep(_($rowCFA["attainmentDescriptor"])) . "</b>" . _($attainmentExtra) . "</div>" ;
+										$output.="<div class='detailItem' style='font-size: 75%; font-style: italic; margin-top: 2px'><b>" . htmlPrep(__($guid, $rowCFA["attainmentDescriptor"])) . "</b>" . __($guid, $attainmentExtra) . "</div>" ;
 									}
 								$output.="</td>" ;
 							}
 							if ($rowCFA["effort"]=="N" OR ($rowCFA["gibbonScaleIDEffort"]=="" AND $rowCFA["gibbonRubricIDEffort"]=="")) {
 								$output.="<td class='dull' style='color: #bbb; text-align: center'>" ;
-									$output.=_('N/A') ;
+									$output.=__($guid, 'N/A') ;
 								$output.="</td>" ;
 							}
 							else {
@@ -166,7 +166,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 									}
 									if ($resultEffort->rowCount()==1) {
 										$rowEffort=$resultEffort->fetch() ;
-										$effortExtra="<br/>" . _($rowEffort["usage"]) ;
+										$effortExtra="<br/>" . __($guid, $rowEffort["usage"]) ;
 									}
 									$styleEffort="style='font-weight: bold'" ;
 									if ($rowCFA["effortConcern"]=="Y" AND $showParentEffortWarning=="Y") {
@@ -179,9 +179,9 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 									$output.="</div>" ;
 									if ($rowCFA["effortValue"]!="") {
 										$output.="<div class='detailItem' style='font-size: 75%; font-style: italic; margin-top: 2px'>" ;
-											$output.="<b>" . htmlPrep(_($rowCFA["effortDescriptor"])) . "</b>" ;
+											$output.="<b>" . htmlPrep(__($guid, $rowCFA["effortDescriptor"])) . "</b>" ;
 											if ($effortExtra!="") {
-												$output.=_($effortExtra) ;
+												$output.=__($guid, $effortExtra) ;
 											}
 										$output.="</div>" ;
 									}
@@ -190,7 +190,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 							
 							if ($rowCFA["comment"]=="N" AND $rowCFA["uploadedResponse"]=="N") {
 								$output.="<td class='dull' style='color: #bbb; text-align: left'>" ;
-									$output.=_('N/A') ;
+									$output.=__($guid, 'N/A') ;
 								$output.="</td>" ;
 							}
 							else {
@@ -199,14 +199,14 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 										$output.=nl2br($rowCFA["comment"]) . "<br/>" ;
 									}
 									if ($rowCFA["response"]!="") {
-										$output.="<br/><a title='" . _('Uploaded Response') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowCFA["response"] . "'>" . _('Uploaded Response') . "</a><br/>" ;
+										$output.="<br/><a title='" . __($guid, 'Uploaded Response') . "' href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowCFA["response"] . "'>" . __($guid, 'Uploaded Response') . "</a><br/>" ;
 									}
 								$output.="</td>" ;
 							}
 							
 							if ($rowCFA["gibbonPlannerEntryID"]==0) {
 								$output.="<td class='dull' style='color: #bbb; text-align: left'>" ;
-									$output.=_('N/A') ;
+									$output.=__($guid, 'N/A') ;
 								$output.="</td>" ;
 							}
 							else {
@@ -221,7 +221,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 								}
 								if ($resultSub->rowCount()!=1) {
 									$output.="<td class='dull' style='color: #bbb; text-align: left'>" ;
-										$output.=_('N/A') ;
+										$output.=__($guid, 'N/A') ;
 									$output.="</td>" ;
 								}
 								else {
@@ -241,49 +241,49 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 											$rowWork=$resultWork->fetch() ;
 											
 											if ($rowWork["status"]=="Exemption") {
-												$linkText=_("Exemption") ;
+												$linkText=__($guid, "Exemption") ;
 											}
 											else if ($rowWork["version"]=="Final") {
-												$linkText=_("Final") ;
+												$linkText=__($guid, "Final") ;
 											}
 											else {
-												$linkText=_("Draft") . " " . $rowWork["count"] ;
+												$linkText=__($guid, "Draft") . " " . $rowWork["count"] ;
 											}
 											
 											$style="" ;
 											$status="On Time" ;
 											if ($rowWork["status"]=="Exemption") {
-												$status=_("Exemption") ;
+												$status=__($guid, "Exemption") ;
 											}
 											else if ($rowWork["status"]=="Late") {
 												$style="style='color: #ff0000; font-weight: bold; border: 2px solid #ff0000; padding: 2px 4px'" ;
-												$status=_("Late") ;
+												$status=__($guid, "Late") ;
 											}
 											
 											if ($rowWork["type"]=="File") {
-												$output.="<span title='" . $rowWork["version"] . ". $status. " . sprintf(_('Submitted at %1$s on %2$s'), substr($rowWork["timestamp"],11,5), dateConvertBack($guid, substr($rowWork["timestamp"],0,10))) . "' $style><a href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowWork["location"] ."'>$linkText</a></span>" ;
+												$output.="<span title='" . $rowWork["version"] . ". $status. " . sprintf(__($guid, 'Submitted at %1$s on %2$s'), substr($rowWork["timestamp"],11,5), dateConvertBack($guid, substr($rowWork["timestamp"],0,10))) . "' $style><a href='" . $_SESSION[$guid]["absoluteURL"] . "/" . $rowWork["location"] ."'>$linkText</a></span>" ;
 											}
 											else if ($rowWork["type"]=="Link") {
-												$output.="<span title='" . $rowWork["version"] . ". $status. " . sprintf(_('Submitted at %1$s on %2$s'), substr($rowWork["timestamp"],11,5), dateConvertBack($guid, substr($rowWork["timestamp"],0,10))) . "' $style><a target='_blank' href='" . $rowWork["location"] ."'>$linkText</a></span>" ;
+												$output.="<span title='" . $rowWork["version"] . ". $status. " . sprintf(__($guid, 'Submitted at %1$s on %2$s'), substr($rowWork["timestamp"],11,5), dateConvertBack($guid, substr($rowWork["timestamp"],0,10))) . "' $style><a target='_blank' href='" . $rowWork["location"] ."'>$linkText</a></span>" ;
 											}
 											else {
-												$output.="<span title='$status. " . sprintf(_('Recorded at %1$s on %2$s'), substr($rowWork["timestamp"],11,5), dateConvertBack($guid, substr($rowWork["timestamp"],0,10))) . "' $style>$linkText</span>" ;
+												$output.="<span title='$status. " . sprintf(__($guid, 'Recorded at %1$s on %2$s'), substr($rowWork["timestamp"],11,5), dateConvertBack($guid, substr($rowWork["timestamp"],0,10))) . "' $style>$linkText</span>" ;
 											}
 										}
 										else {
 											if (date("Y-m-d H:i:s")<$rowSub["homeworkDueDateTime"]) {
-												$output.="<span title='Pending'>" . _('Pending') . "</span>" ;
+												$output.="<span title='Pending'>" . __($guid, 'Pending') . "</span>" ;
 											}
 											else {
 												if ($rowCFA["dateStart"]>$rowSub["date"]) {
-													$output.="<span title='" . _('Student joined school after assessment was given.') . "' style='color: #000; font-weight: normal; border: 2px none #ff0000; padding: 2px 4px'>" . _('NA') . "</span>" ;
+													$output.="<span title='" . __($guid, 'Student joined school after assessment was given.') . "' style='color: #000; font-weight: normal; border: 2px none #ff0000; padding: 2px 4px'>" . __($guid, 'NA') . "</span>" ;
 												}
 												else {
 													if ($rowSub["homeworkSubmissionRequired"]=="Compulsory") {
-														$output.="<div style='color: #ff0000; font-weight: bold; border: 2px solid #ff0000; padding: 2px 4px; margin: 2px 0px'>" . _('Incomplete') . "</div>" ;
+														$output.="<div style='color: #ff0000; font-weight: bold; border: 2px solid #ff0000; padding: 2px 4px; margin: 2px 0px'>" . __($guid, 'Incomplete') . "</div>" ;
 													}
 													else {
-														$output.=_("Not submitted online") ;
+														$output.=__($guid, "Not submitted online") ;
 													}
 												}
 											}
@@ -299,7 +299,7 @@ function getCFARecord($guid, $connection2, $gibbonPersonID) {
 		}
 		if ($results==FALSE) {
 			$output.="<div class='error'>" ;
-				$output.=_("There are no records to display.") ;
+				$output.=__($guid, "There are no records to display.") ;
 			$output.="</div>" ;
 		}
 	}
@@ -311,7 +311,7 @@ function sidebarExtra($guid, $connection2, $gibbonCourseClassID, $mode="manage",
 	$output="" ;
 	
 	$output.="<h2>" ;
-	$output.=_("View Classes") ;
+	$output.=__($guid, "View Classes") ;
 	$output.="</h2>" ;
 	
 	$selectCount=0 ;
@@ -335,7 +335,7 @@ function sidebarExtra($guid, $connection2, $gibbonCourseClassID, $mode="manage",
 									$resultSelect->execute($dataSelect);
 								}
 								catch(PDOException $e) { }
-								$output.="<optgroup label='--" . _('My Classes') . "--'>" ;
+								$output.="<optgroup label='--" . __($guid, 'My Classes') . "--'>" ;
 								while ($rowSelect=$resultSelect->fetch()) {
 									$selected="" ;
 									if ($rowSelect["gibbonCourseClassID"]==$gibbonCourseClassID AND $selectCount==0) {
@@ -354,7 +354,7 @@ function sidebarExtra($guid, $connection2, $gibbonCourseClassID, $mode="manage",
 									$resultSelect->execute($dataSelect);
 								}
 								catch(PDOException $e) { }
-								$output.="<optgroup label='--" . _('All Classes') . "--'>" ;
+								$output.="<optgroup label='--" . __($guid, 'All Classes') . "--'>" ;
 									while ($rowSelect=$resultSelect->fetch()) {
 										$selected="" ;
 										if ($rowSelect["gibbonCourseClassID"]==$gibbonCourseClassID AND $selectCount==0) {
@@ -374,7 +374,7 @@ function sidebarExtra($guid, $connection2, $gibbonCourseClassID, $mode="manage",
 								$resultSelect->execute($dataSelect);
 							}
 							catch(PDOException $e) { }
-							$output.="<optgroup label='--" . _('Departmental Classes') . "--'>" ;
+							$output.="<optgroup label='--" . __($guid, 'Departmental Classes') . "--'>" ;
 								while ($rowSelect=$resultSelect->fetch()) {
 									$selected="" ;
 									if ($gibbonCourseClassID!="") {
@@ -390,7 +390,7 @@ function sidebarExtra($guid, $connection2, $gibbonCourseClassID, $mode="manage",
 					 $output.="</select>" ;
 				$output.="</td>" ;
 				$output.="<td class='right'>" ;
-					$output.="<input type='submit' value='" . _('Go') . "'>" ;
+					$output.="<input type='submit' value='" . __($guid, 'Go') . "'>" ;
 				$output.="</td>" ;
 			$output.="</tr>" ;
 		$output.="</table>" ;

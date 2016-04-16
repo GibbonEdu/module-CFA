@@ -55,7 +55,7 @@ date_default_timezone_set($_SESSION[$guid]["timezone"]);
 
 //Check for CLI, so this cannot be run through browser
 if (php_sapi_name()!="cli") { 
-	print _("This script cannot be run from a browser, only via CLI.") . "\n\n" ;
+	print __($guid, "This script cannot be run from a browser, only via CLI.") . "\n\n" ;
 }
 else {
 	//SCAN THROUGH ALL CFAS GOING LIVE TODAY
@@ -78,11 +78,11 @@ else {
 	
 		while ($rowPerson=$resultPerson->fetch()) {
 			if ($rowPerson["role"]=="Teacher") {
-				$notificationText=sprintf(_('Your CFA column for class %1$s has gone live today.'), $row["course"] . "." . $row["class"]) ;
+				$notificationText=sprintf(__($guid, 'Your CFA column for class %1$s has gone live today.'), $row["course"] . "." . $row["class"]) ;
 				setNotification($connection2, $guid, $rowPerson["gibbonPersonID"], $notificationText, "CFA", "/index.php?q=/modules/CFA/cfa_write.php&gibbonCourseClassID=" . $row["gibbonCourseClassID"]) ;
 			}
 			else {
-				$notificationText=sprintf(_('You have new CFA assessment feedback for class %1$s.'), $row["course"] . "." . $row["class"]) ;
+				$notificationText=sprintf(__($guid, 'You have new CFA assessment feedback for class %1$s.'), $row["course"] . "." . $row["class"]) ;
 				setNotification($connection2, $guid, $rowPerson["gibbonPersonID"], $notificationText, "CFA", "/index.php?q=/modules/CFA/cfa_view.php") ;
 			}
 		}
