@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+v1.4.08
+-------
+Added student dashboard hook
+
 v1.4.07
 -------
 Gibbon Core v12 & PHP 7 Compatibility 

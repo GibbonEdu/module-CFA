@@ -73,9 +73,16 @@ $count++ ;
 $sql[$count][0]="1.4.06" ;
 $sql[$count][1]="" ;
 
-//v1.4.06
+//v1.4.07
 $count++ ;
 $sql[$count][0]="1.4.07" ;
 $sql[$count][1]="" ;
+
+//v1.4.08
+$count++ ;
+$sql[$count][0]="1.4.08" ;
+$sql[$count][1]="
+INSERT INTO `gibbonHook` (`gibbonHookID`, `name`, `type`, `options`, gibbonModuleID) VALUES (NULL, 'CFA', 'Student Dashboard', 'a:3:{s:16:\"sourceModuleName\";s:3:\"CFA\";s:18:\"sourceModuleAction\";s:14:\"View CFAs_mine\";s:19:\"sourceModuleInclude\";s:33:\"hook_studentDashboard_cfaView.php\";}', (SELECT gibbonModuleID FROM gibbonModule WHERE name='CFA'));end
+" ;
 
 ?>

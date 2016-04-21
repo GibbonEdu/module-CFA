@@ -25,7 +25,7 @@ $description="The CFA module allows schools to run a program of Common Formative
 $entryURL="cfa_write.php" ;
 $type="Additional" ;
 $category="Assess" ;
-$version="1.4.07" ;
+$version="1.4.08" ;
 $author="Ross Parker" ;
 $url="http://rossparker.org" ;
 
@@ -194,6 +194,12 @@ $array["sourceModuleName"]="CFA" ;
 $array["sourceModuleAction"]="View CFAs_myChildrens" ;
 $array["sourceModuleInclude"]="hook_parentalDashboard_cfaView.php" ;
 $hooks[1]="INSERT INTO `gibbonHook` (`gibbonHookID`, `name`, `type`, `options`, gibbonModuleID) VALUES (NULL, 'CFA', 'Parental Dashboard', '" . serialize($array) . "', (SELECT gibbonModuleID FROM gibbonModule WHERE name='$name'));" ;
+
+$array=array() ;
+$array["sourceModuleName"]="CFA" ;
+$array["sourceModuleAction"]="View CFAs_mine" ;
+$array["sourceModuleInclude"]="hook_studentDashboard_cfaView.php" ;
+$hooks[2]="INSERT INTO `gibbonHook` (`gibbonHookID`, `name`, `type`, `options`, gibbonModuleID) VALUES (NULL, 'CFA', 'Student Dashboard', '" . serialize($array) . "', (SELECT gibbonModuleID FROM gibbonModule WHERE name='$name'));" ;
 
 
 ?>
