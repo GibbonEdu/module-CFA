@@ -25,7 +25,7 @@ $description="The CFA module allows schools to run a program of Common Formative
 $entryURL="cfa_write.php" ;
 $type="Additional" ;
 $category="Assess" ;
-$version="1.4.08" ;
+$version="1.4.09" ;
 $author="Ross Parker" ;
 $url="http://rossparker.org" ;
 

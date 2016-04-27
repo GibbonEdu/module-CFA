@@ -480,7 +480,7 @@ else {
 												$leftBorder=TRUE ;
 												$leftBorderStyle="border-left: 2px solid #666;" ;
 											}
-											print "<th style='$leftBorderStyle text-align: center; width: 80px'>" ;
+											print "<th style='$leftBorderStyle text-align: center; width: 60px'>" ;
 												print "<span title='" . __($guid, 'Comment') . "'>" . __($guid, 'Com') . "</span>" ;
 											print "</th>" ;
 										}
@@ -651,11 +651,11 @@ else {
 													print "<td style='$leftBorderStyle text-align: center;'>" ;
 														$style="" ;
 														if ($rowEntry["comment"]!="") {
-															if (strlen($rowEntry["comment"])<11) {
+															if (strlen($rowEntry["comment"])<7) {
 																print htmlPrep($rowEntry["comment"]) ;
 															}
 															else {
-																print "<span $style title='" . htmlPrep($rowEntry["comment"]) . "'>" . substr($rowEntry["comment"], 0, 10) . "...</span>" ;
+																print "<span $style title='" . htmlPrep($rowEntry["comment"]) . "'>" . substr($rowEntry["comment"], 0, 6) . "...</span>" ;
 															}
 														}
 													print "</td>" ;
