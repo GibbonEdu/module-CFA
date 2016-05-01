@@ -1,5 +1,11 @@
 CHANGELOG
 =========
+v1.4.10
+-------
+Beautified PHP code
+Improved error handling
+Edit link added to add return
+
 v1.4.09
 -------
 Fixed column width issue in Write view
@@ -10,7 +16,7 @@ Added student dashboard hook
 
 v1.4.07
 -------
-Gibbon Core v12 & PHP 7 Compatibility 
+Gibbon Core v12 & PHP 7 Compatibility
 
 v1.4.06
 -------

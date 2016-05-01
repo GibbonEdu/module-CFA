@@ -18,62 +18,57 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 //Gibbon system-wide includes
-include "../../functions.php" ;
-include "../../config.php" ;
+include '../../functions.php';
+include '../../config.php';
 
 //Module includes
-include "./moduleFunctions.php" ;
+include './moduleFunctions.php';
 
 //New PDO DB connection
 try {
-  	$connection2=new PDO("mysql:host=$databaseServer;dbname=$databaseName;charset=utf8", $databaseUsername, $databasePassword);
-	$connection2->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$connection2->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-}
-catch(PDOException $e) {
-  echo $e->getMessage();
+    $connection2 = new PDO("mysql:host=$databaseServer;dbname=$databaseName;charset=utf8", $databaseUsername, $databasePassword);
+    $connection2->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $connection2->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo $e->getMessage();
 }
 
-@session_start() ;
+@session_start();
 
 //Set timezone from session variable
-date_default_timezone_set($_SESSION[$guid]["timezone"]);
+date_default_timezone_set($_SESSION[$guid]['timezone']);
 
-$gibbonCourseClassID=$_GET["gibbonCourseClassID"] ;
-$cfaColumnID=$_GET["cfaColumnID"] ;
-$gibbonPersonID=$_GET["gibbonPersonID"] ;
-$URL=$_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/CFA/cfa_write_data.php&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID" ;
+$gibbonCourseClassID = $_GET['gibbonCourseClassID'];
+$cfaColumnID = $_GET['cfaColumnID'];
+$gibbonPersonID = $_GET['gibbonPersonID'];
+$URL = $_SESSION[$guid]['absoluteURL']."/index.php?q=/modules/CFA/cfa_write_data.php&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID";
 
-if (isActionAccessible($guid, $connection2, "/modules/CFA/cfa_write_data.php")==FALSE) {
-	//Fail 0
-	$URL.="&deleteReturn=fail0" ;
-	header("Location: {$URL}");
+if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_write_data.php') == false) {
+    //Fail 0
+    $URL .= '&deleteReturn=fail0';
+    header("Location: {$URL}");
+} else {
+    //Proceed!
+    //Check if planner specified
+    if ($gibbonPersonID == '' or $gibbonCourseClassID == '' or $cfaColumnID == '') {
+        //Fail1
+        $URL .= '&deleteReturn=fail1';
+        header("Location: {$URL}");
+    } else {
+        try {
+            $data = array('gibbonPersonID' => $gibbonPersonID, 'cfaColumnID' => $cfaColumnID);
+            $sql = "UPDATE cfaEntry SET response='' WHERE gibbonPersonIDStudent=:gibbonPersonID AND cfaColumnID=:cfaColumnID";
+            $result = $connection2->prepare($sql);
+            $result->execute($data);
+        } catch (PDOException $e) {
+            //Fail 2
+            $URL .= '&deleteReturn=fail2';
+            header("Location: {$URL}");
+            exit();
+        }
+
+        $URL .= '&deleteReturn=success0';
+        //Success 0
+        header("Location: {$URL}");
+    }
 }
-else {
-	//Proceed!
-	//Check if planner specified
-	if ($gibbonPersonID=="" OR $gibbonCourseClassID=="" OR $cfaColumnID=="") {
-		//Fail1
-		$URL.="&deleteReturn=fail1" ;
-		header("Location: {$URL}");
-	}
-	else {
-		try {
-			$data=array("gibbonPersonID"=>$gibbonPersonID, "cfaColumnID"=>$cfaColumnID); 
-			$sql="UPDATE cfaEntry SET response='' WHERE gibbonPersonIDStudent=:gibbonPersonID AND cfaColumnID=:cfaColumnID" ;
-			$result=$connection2->prepare($sql);
-			$result->execute($data);
-		}
-		catch(PDOException $e) { 
-			//Fail 2
-			$URL.="&deleteReturn=fail2" ;
-			header("Location: {$URL}");
-			exit() ;
-		}
-		
-		$URL.="&deleteReturn=success0" ;
-		//Success 0
-		header("Location: {$URL}");
-	}
-}
-?>

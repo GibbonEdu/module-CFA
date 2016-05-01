@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
- * Sets version information
+ * Sets version information.
  */
-$moduleVersion="1.4.09" ;
-?>
+$moduleVersion = '1.4.10';
