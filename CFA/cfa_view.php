@@ -30,8 +30,7 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_view.php') == fals
 } else {
     //Get action with highest precendence
     $highestAction = getHighestGroupedAction($guid, $_GET['q'], $connection2);
-    if ($highestAction == false) {
-        echo "<div class='error'>";
+    if ($highestAction == false) { echo "<div class='error'>";
         echo __($guid, 'The highest grouped action cannot be determined.');
         echo '</div>';
     } else {
@@ -49,38 +48,37 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_view.php') == fals
             echo __($guid, 'Choose A Student');
             echo '</h3>';
             echo "<form method='get' action='".$_SESSION[$guid]['absoluteURL']."/index.php?q=/modules/Behaviour/behaviour_manage.php'>";
-            echo "<table class='noIntBorder' cellspacing='0' style='width: 100%'>";
-            ?>
-					<tr>
-						<td> 
-							<b><?php echo __($guid, 'Student') ?></b><br/>
-							<span style="font-size: 90%"><i></i></span>
-						</td>
-						<td class="right">
-							<select name="gibbonPersonID" id="gibbonPersonID" style="width: 302px">
-								<option value=""></option>
-								<?php
-                                try {
-                                    $dataSelect = array('gibbonSchoolYearID' => $_SESSION[$guid]['gibbonSchoolYearID']);
-                                    $sqlSelect = "SELECT * FROM gibbonPerson JOIN gibbonStudentEnrolment ON (gibbonPerson.gibbonPersonID=gibbonStudentEnrolment.gibbonPersonID) JOIN gibbonRollGroup ON (gibbonStudentEnrolment.gibbonRollGroupID=gibbonRollGroup.gibbonRollGroupID) WHERE gibbonRollGroup.gibbonSchoolYearID=:gibbonSchoolYearID AND status='Full' AND (dateStart IS NULL OR dateStart<='".date('Y-m-d')."') AND (dateEnd IS NULL  OR dateEnd>='".date('Y-m-d')."') ORDER BY surname, preferredName";
-                                    $resultSelect = $connection2->prepare($sqlSelect);
-                                    $resultSelect->execute($dataSelect);
-                                } catch (PDOException $e) {
-                                }
-            while ($rowSelect = $resultSelect->fetch()) {
-                if ($gibbonPersonID == $rowSelect['gibbonPersonID']) {
-                    echo "<option selected value='".$rowSelect['gibbonPersonID']."'>".formatName('', htmlPrep($rowSelect['preferredName']), htmlPrep($rowSelect['surname']), 'Student', true).' ('.htmlPrep($rowSelect['nameShort']).')</option>';
-                } else {
-                    echo "<option value='".$rowSelect['gibbonPersonID']."'>".formatName('', htmlPrep($rowSelect['preferredName']), htmlPrep($rowSelect['surname']), 'Student', true).' ('.htmlPrep($rowSelect['nameShort']).')</option>';
-                }
-            }
-            ?>			
-							</select>
-						</td>
-					</tr>
+            echo "<table class='noIntBorder' cellspacing='0' style='width: 100%'>"; ?>
+			<tr>
+				<td> 
+					<b><?php echo __($guid, 'Student') ?></b><br/>
+					<span style="font-size: 90%"><i></i></span>
+				</td>
+				<td class="right">
+					<select name="gibbonPersonID" id="gibbonPersonID" style="width: 302px">
+						<option value=""></option>
+						<?php
+						try {
+							$dataSelect = array('gibbonSchoolYearID' => $_SESSION[$guid]['gibbonSchoolYearID']);
+							$sqlSelect = "SELECT * FROM gibbonPerson JOIN gibbonStudentEnrolment ON (gibbonPerson.gibbonPersonID=gibbonStudentEnrolment.gibbonPersonID) JOIN gibbonRollGroup ON (gibbonStudentEnrolment.gibbonRollGroupID=gibbonRollGroup.gibbonRollGroupID) WHERE gibbonRollGroup.gibbonSchoolYearID=:gibbonSchoolYearID AND status='Full' AND (dateStart IS NULL OR dateStart<='".date('Y-m-d')."') AND (dateEnd IS NULL  OR dateEnd>='".date('Y-m-d')."') ORDER BY surname, preferredName";
+							$resultSelect = $connection2->prepare($sqlSelect);
+							$resultSelect->execute($dataSelect);
+						} catch (PDOException $e) {
+						}
+						while ($rowSelect = $resultSelect->fetch()) {
+							if ($gibbonPersonID == $rowSelect['gibbonPersonID']) {
+								echo "<option selected value='".$rowSelect['gibbonPersonID']."'>".formatName('', htmlPrep($rowSelect['preferredName']), htmlPrep($rowSelect['surname']), 'Student', true).' ('.htmlPrep($rowSelect['nameShort']).')</option>';
+							} else {
+								echo "<option value='".$rowSelect['gibbonPersonID']."'>".formatName('', htmlPrep($rowSelect['preferredName']), htmlPrep($rowSelect['surname']), 'Student', true).' ('.htmlPrep($rowSelect['nameShort']).')</option>';
+							}
+						}
+						?>			
+					</select>
+				</td>
+			</tr>
 					
-					<?php
-                    echo '<tr>';
+			<?php
+			echo '<tr>';
             echo "<td class='right' colspan=2>";
             echo "<input type='hidden' name='q' value='".$_GET['q']."'>";
             echo "<a href='".$_SESSION[$guid]['absoluteURL']."/index.php?q=/modules/CFA/cfa_view.php'>".__($guid, 'Clear Filters').'</a> ';
@@ -173,63 +171,61 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_view.php') == fals
                     echo "<form method='get' action='".$_SESSION[$guid]['absoluteURL']."/index.php?q=/modules/Behaviour/behaviour_manage.php'>";
                     echo "<table class='noIntBorder' cellspacing='0' style='width: 100%'>";
                     ?>
-							<tr>
-								<td> 
-									<b><?php echo __($guid, 'Student') ?></b><br/>
-								</td>
-								<td class="right">
-									<select name="search" id="search" style="width: 302px">
-										<option value=""></value>
-										<?php echo $options;
-                    ?> 
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td colspan=2 class="right">
-									<input type="hidden" name="q" value="/modules/CFA/cfa_view.php">
-									<input type="hidden" name="address" value="<?php echo $_SESSION[$guid]['address'] ?>">
-									<?php
-                                    echo "<a href='".$_SESSION[$guid]['absoluteURL']."/index.php?q=/modules/CFA/cfa_view.php'>".__($guid, 'Clear Search').'</a>';
-                    ?>
-									<input type="submit" value="<?php echo __($guid, 'Submit');
-                    ?>">
-								</td>
-							</tr>
-						</table>
-					</form>
-					<?php
+					<tr>
+						<td> 
+							<b><?php echo __($guid, 'Student') ?></b><br/>
+						</td>
+						<td class="right">
+							<select name="search" id="search" style="width: 302px">
+								<option value=""></value>
+								<?php echo $options; ?> 
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan=2 class="right">
+							<input type="hidden" name="q" value="/modules/CFA/cfa_view.php">
+							<input type="hidden" name="address" value="<?php echo $_SESSION[$guid]['address'] ?>">
+							<?php
+							echo "<a href='".$_SESSION[$guid]['absoluteURL']."/index.php?q=/modules/CFA/cfa_view.php'>".__($guid, 'Clear Search').'</a>';
+                    		?>
+							<input type="submit" value="<?php echo __($guid, 'Submit'); ?>">
+						</td>
+					</tr>
+				</table>
+			</form>
+			<?php
 
-                }
+			}
 
-                $gibbonPersonID = null;
-                if (isset($_GET['search'])) {
-                    $gibbonPersonID = $_GET['search'];
-                }
-                $showParentAttainmentWarning = getSettingByScope($connection2, 'Markbook', 'showParentAttainmentWarning');
-                $showParentEffortWarning = getSettingByScope($connection2, 'Markbook', 'showParentEffortWarning');
+			$gibbonPersonID = null;
+			if (isset($_GET['search'])) {
+				$gibbonPersonID = $_GET['search'];
+			}
+			$showParentAttainmentWarning = getSettingByScope($connection2, 'Markbook', 'showParentAttainmentWarning');
+			$showParentEffortWarning = getSettingByScope($connection2, 'Markbook', 'showParentEffortWarning');
 
-                if ($gibbonPersonID != '' and $count > 0) {
-                    //Confirm access to this student
-                    try {
-                        $dataChild = array();
-                        $sqlChild = "SELECT * FROM gibbonFamilyChild JOIN gibbonFamily ON (gibbonFamilyChild.gibbonFamilyID=gibbonFamily.gibbonFamilyID) JOIN gibbonFamilyAdult ON (gibbonFamilyAdult.gibbonFamilyID=gibbonFamily.gibbonFamilyID) JOIN gibbonPerson ON (gibbonFamilyChild.gibbonPersonID=gibbonPerson.gibbonPersonID) WHERE gibbonPerson.status='Full' AND (dateStart IS NULL OR dateStart<='".date('Y-m-d')."') AND (dateEnd IS NULL  OR dateEnd>='".date('Y-m-d')."') AND gibbonFamilyChild.gibbonPersonID=$gibbonPersonID AND gibbonFamilyAdult.gibbonPersonID=".$_SESSION[$guid]['gibbonPersonID']." AND childDataAccess='Y'";
-                        $resultChild = $connection2->prepare($sqlChild);
-                        $resultChild->execute($dataChild);
-                    } catch (PDOException $e) {
-                        echo "<div class='error'>".$e->getMessage().'</div>';
-                    }
-                    if ($resultChild->rowCount() < 1) {
-                        echo "<div class='error'>";
-                        echo __($guid, 'The selected record does not exist, or you do not have access to it.');
-                        echo '</div>';
-                    } else {
-                        $rowChild = $resultChild->fetch();
-                        echo getCFARecord($guid, $connection2, $gibbonPersonID);
-                    }
-                }
-            }
-        } else { //MY CFAS
+			if ($gibbonPersonID != '' and $count > 0) {
+				//Confirm access to this student
+				try {
+					$dataChild = array();
+					$sqlChild = "SELECT * FROM gibbonFamilyChild JOIN gibbonFamily ON (gibbonFamilyChild.gibbonFamilyID=gibbonFamily.gibbonFamilyID) JOIN gibbonFamilyAdult ON (gibbonFamilyAdult.gibbonFamilyID=gibbonFamily.gibbonFamilyID) JOIN gibbonPerson ON (gibbonFamilyChild.gibbonPersonID=gibbonPerson.gibbonPersonID) WHERE gibbonPerson.status='Full' AND (dateStart IS NULL OR dateStart<='".date('Y-m-d')."') AND (dateEnd IS NULL  OR dateEnd>='".date('Y-m-d')."') AND gibbonFamilyChild.gibbonPersonID=$gibbonPersonID AND gibbonFamilyAdult.gibbonPersonID=".$_SESSION[$guid]['gibbonPersonID']." AND childDataAccess='Y'";
+					$resultChild = $connection2->prepare($sqlChild);
+					$resultChild->execute($dataChild);
+				} catch (PDOException $e) {
+					echo "<div class='error'>".$e->getMessage().'</div>';
+				}
+				if ($resultChild->rowCount() < 1) {
+					echo "<div class='error'>";
+					echo __($guid, 'The selected record does not exist, or you do not have access to it.');
+					echo '</div>';
+				} else {
+					$rowChild = $resultChild->fetch();
+					echo getCFARecord($guid, $connection2, $gibbonPersonID);
+				}
+			}
+		}
+        } else { //My CFAS
             echo "<div class='trail'>";
             echo "<div class='trailHead'><a href='".$_SESSION[$guid]['absoluteURL']."'>".__($guid, 'Home')."</a> > <a href='".$_SESSION[$guid]['absoluteURL'].'/index.php?q=/modules/'.getModuleName($_GET['q']).'/'.getModuleEntry($_GET['q'], $connection2, $guid)."'>".__($guid, getModuleName($_GET['q']))."</a> > </div><div class='trailEnd'>".__($guid, 'View My CFAs').'</div>';
             echo '</div>';

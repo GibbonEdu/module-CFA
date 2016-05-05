@@ -34,8 +34,7 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_view.php') == fals
     $cfaColumnID = $_GET['cfaColumnID'];
     $gibbonPersonID = $_GET['gibbonPersonID'];
     $gibbonRubricID = $_GET['gibbonRubricID'];
-    if ($gibbonCourseClassID == '' or $cfaColumnID == '' or $gibbonPersonID == '' or $gibbonRubricID == '') {
-        echo "<div class='error'>";
+    if ($gibbonCourseClassID == '' or $cfaColumnID == '' or $gibbonPersonID == '' or $gibbonRubricID == '') { echo "<div class='error'>";
         echo __($guid, 'You have not specified one or more required parameters.');
         echo '</div>';
     } else {

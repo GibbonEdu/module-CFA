@@ -41,8 +41,7 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_write_data.php') =
     echo '</div>';
 } else {
     $highestAction = getHighestGroupedAction($guid, $_GET['q'], $connection2);
-    if ($highestAction == false) {
-        echo "<div class='error'>";
+    if ($highestAction == false) { echo "<div class='error'>";
         echo __($guid, 'The highest grouped action cannot be determined.');
         echo '</div>';
     } else {
@@ -163,24 +162,24 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_write_data.php') =
                             $gibbonRubricIDEffort[$i] = $row['gibbonRubricIDEffort'];
                         }
 
-                                    //WORK OUT IF THERE IS SUBMISSION
-                                    if ($row2['gibbonPlannerEntryID'] != null) {
-                                        try {
-                                            $dataSub = array('gibbonPlannerEntryID' => $row2['gibbonPlannerEntryID']);
-                                            $sqlSub = "SELECT * FROM gibbonPlannerEntry WHERE gibbonPlannerEntryID=:gibbonPlannerEntryID AND homeworkSubmission='Y'";
-                                            $resultSub = $connection2->prepare($sqlSub);
-                                            $resultSub->execute($dataSub);
-                                        } catch (PDOException $e) {
-                                            echo "<div class='error'>".$e->getMessage().'</div>';
-                                        }
+						//WORK OUT IF THERE IS SUBMISSION
+						if ($row2['gibbonPlannerEntryID'] != null) {
+							try {
+								$dataSub = array('gibbonPlannerEntryID' => $row2['gibbonPlannerEntryID']);
+								$sqlSub = "SELECT * FROM gibbonPlannerEntry WHERE gibbonPlannerEntryID=:gibbonPlannerEntryID AND homeworkSubmission='Y'";
+								$resultSub = $connection2->prepare($sqlSub);
+								$resultSub->execute($dataSub);
+							} catch (PDOException $e) {
+								echo "<div class='error'>".$e->getMessage().'</div>';
+							}
 
-                                        if ($resultSub->rowCount() == 1) {
-                                            $submission = true;
-                                            $rowSub = $resultSub->fetch();
-                                            $homeworkDueDateTime = $rowSub['homeworkDueDateTime'];
-                                            $lessonDate[$i] = $rowSub['date'];
-                                        }
-                                    }
+							if ($resultSub->rowCount() == 1) {
+								$submission = true;
+								$rowSub = $resultSub->fetch();
+								$homeworkDueDateTime = $rowSub['homeworkDueDateTime'];
+								$lessonDate[$i] = $rowSub['date'];
+							}
+						}
 
                         $header .= "<th style='text-align: center' colspan=$span-2>";
                         $header .= "<span title='".htmlPrep($row2['description'])."'>".$row2['name'].'<br/>';
@@ -273,43 +272,43 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_write_data.php') =
                     $header .= '</tr>';
 
                     ?>
-							<tr class='break'>
+					<tr class='break'>
+						<?php
+						echo '<td colspan='.($span).'>';
+                    		?>
+							<h3>Settings</h3>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<b><?php echo __($guid, 'Submitted Homework ') ?></b><br/>
+							<?php $row2['gibbonCourseClassID'] ?>
+						</td>
+						<td class="right"  colspan="<?php echo $span - 1 ?>">
+							<select name="gibbonPlannerEntryID" id="gibbonPlannerEntryID" style="width: 332px">
 								<?php
-                                echo '<td colspan='.($span).'>';
-                    ?>
-									<h3>Settings</h3>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<b><?php echo __($guid, 'Submitted Homework ') ?></b><br/>
-									<?php $row2['gibbonCourseClassID'] ?>
-								</td>
-								<td class="right"  colspan="<?php echo $span - 1 ?>">
-									<select name="gibbonPlannerEntryID" id="gibbonPlannerEntryID" style="width: 332px">
-										<?php
-                                        try {
-                                            $dataSelect = array('gibbonCourseClassID' => $row2['gibbonCourseClassID']);
-                                            $sqlSelect = "SELECT * FROM gibbonPlannerEntry WHERE gibbonCourseClassID=:gibbonCourseClassID AND homeworkSubmission='Y' ORDER BY date DESC, timeStart DESC, name";
-                                            $resultSelect = $connection2->prepare($sqlSelect);
-                                            $resultSelect->execute($dataSelect);
-                                        } catch (PDOException $e) {
-                                        }
-                    echo "<option value=''></option>";
-                    while ($rowSelect = $resultSelect->fetch()) {
-                        $selected = '';
-                        if ($rowSelect['gibbonPlannerEntryID'] == $row2['gibbonPlannerEntryID']) {
-                            $selected = 'selected ';
-                        }
-                        echo "<option $selected class='".$rowSelect['gibbonUnitID'].'-'.$rowSelect['gibbonHookID']."' value='".$rowSelect['gibbonPlannerEntryID']."'>".htmlPrep($rowSelect['name']).'</option>';
-                    }
-                    ?>
-									</select>
-								</td>
-							</tr>
+								try {
+									$dataSelect = array('gibbonCourseClassID' => $row2['gibbonCourseClassID']);
+									$sqlSelect = "SELECT * FROM gibbonPlannerEntry WHERE gibbonCourseClassID=:gibbonCourseClassID AND homeworkSubmission='Y' ORDER BY date DESC, timeStart DESC, name";
+									$resultSelect = $connection2->prepare($sqlSelect);
+									$resultSelect->execute($dataSelect);
+								} catch (PDOException $e) {
+								}
+								echo "<option value=''></option>";
+								while ($rowSelect = $resultSelect->fetch()) {
+									$selected = '';
+									if ($rowSelect['gibbonPlannerEntryID'] == $row2['gibbonPlannerEntryID']) {
+										$selected = 'selected ';
+									}
+									echo "<option $selected class='".$rowSelect['gibbonUnitID'].'-'.$rowSelect['gibbonHookID']."' value='".$rowSelect['gibbonPlannerEntryID']."'>".htmlPrep($rowSelect['name']).'</option>';
+								}
+								?>
+							</select>
+						</td>
+					</tr>
 
-							<?php
-                            echo $header;
+					<?php
+					echo $header;
                     $count = 0;
                     $rowNum = 'odd';
                     try {
@@ -336,8 +335,8 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_write_data.php') =
                             }
                             ++$count;
 
-                                    //COLOR ROW BY STATUS!
-                                    echo "<tr class=$rowNum>";
+							//COLOR ROW BY STATUS!
+							echo "<tr class=$rowNum>";
                             echo '<td>';
                             echo "<div style='padding: 2px 0px'>".($count).") <b><a href='index.php?q=/modules/Students/student_view_details.php&gibbonPersonID=".$rowStudents['gibbonPersonID'].'&subpage=Markbook#'.$gibbonCourseClassID."'>".formatName('', $rowStudents['preferredName'], $rowStudents['surname'], 'Student', true).'</a><br/></div>';
                             echo '</td>';
@@ -412,28 +411,28 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_write_data.php') =
                                 }
                                 if ($row2['attainment'] == 'Y') {
                                     echo "<td style='text-align: center'>";
-                                                    //Create attainment grade select
-                                                    if ($row2['gibbonScaleIDAttainment'] != '') {
-                                                        echo "<select name='$count-attainmentValue' id='$count-attainmentValue' style='width:50px'>";
-                                                        try {
-                                                            $dataSelect = array('gibbonScaleID' => $gibbonScaleIDAttainment);
-                                                            $sqlSelect = 'SELECT * FROM gibbonScaleGrade WHERE gibbonScaleID=:gibbonScaleID ORDER BY sequenceNumber';
-                                                            $resultSelect = $connection2->prepare($sqlSelect);
-                                                            $resultSelect->execute($dataSelect);
-                                                        } catch (PDOException $e) {
-                                                        }
-                                                        echo "<option value=''></option>";
-                                                        $sequence = '';
-                                                        $descriptor = '';
-                                                        while ($rowSelect = $resultSelect->fetch()) {
-                                                            if ($rowEntry['attainmentValue'] == $rowSelect['value']) {
-                                                                echo "<option selected value='".htmlPrep($rowSelect['value'])."'>".htmlPrep(__($guid, $rowSelect['value'])).'</option>';
-                                                            } else {
-                                                                echo "<option value='".htmlPrep($rowSelect['value'])."'>".htmlPrep(__($guid, $rowSelect['value'])).'</option>';
-                                                            }
-                                                        }
-                                                        echo '</select>';
-                                                    }
+									//Create attainment grade select
+									if ($row2['gibbonScaleIDAttainment'] != '') {
+										echo "<select name='$count-attainmentValue' id='$count-attainmentValue' style='width:50px'>";
+										try {
+											$dataSelect = array('gibbonScaleID' => $gibbonScaleIDAttainment);
+											$sqlSelect = 'SELECT * FROM gibbonScaleGrade WHERE gibbonScaleID=:gibbonScaleID ORDER BY sequenceNumber';
+											$resultSelect = $connection2->prepare($sqlSelect);
+											$resultSelect->execute($dataSelect);
+										} catch (PDOException $e) {
+										}
+										echo "<option value=''></option>";
+										$sequence = '';
+										$descriptor = '';
+										while ($rowSelect = $resultSelect->fetch()) {
+											if ($rowEntry['attainmentValue'] == $rowSelect['value']) {
+												echo "<option selected value='".htmlPrep($rowSelect['value'])."'>".htmlPrep(__($guid, $rowSelect['value'])).'</option>';
+											} else {
+												echo "<option value='".htmlPrep($rowSelect['value'])."'>".htmlPrep(__($guid, $rowSelect['value'])).'</option>';
+											}
+										}
+										echo '</select>';
+									}
                                     echo "<div style='height: 20px'>";
                                     if ($row2['gibbonRubricIDAttainment'] != '') {
                                         echo "<a class='thickbox' href='".$_SESSION[$guid]['absoluteURL'].'/fullscreen.php?q=/modules/'.$_SESSION[$guid]['module'].'/cfa_write_rubric.php&gibbonRubricID='.$row2['gibbonRubricIDAttainment']."&gibbonCourseClassID=$gibbonCourseClassID&cfaColumnID=$cfaColumnID&gibbonPersonID=".$rowStudents['gibbonPersonID']."&type=attainment&width=1100&height=550'><img style='margin-top: 3px' title='".__($guid, 'Mark Rubric')."' src='./themes/".$_SESSION[$guid]['gibbonThemeName']."/img/rubric.png'/></a>";
@@ -483,12 +482,11 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_write_data.php') =
                                         } else {
                                             echo "<input style='max-width: 228px; margin-top: 5px' type='file' name='response$count' id='response$count'>";
                                             ?>
-															<script type="text/javascript">
-																var <?php echo "response$count" ?>=new LiveValidation('<?php echo "response$count" ?>');
-																<?php echo "response$count" ?>.add( Validate.Inclusion, { within: [<?php echo $ext;
-                                            ?>], failureMessage: "Illegal file type!", partialMatch: true, caseSensitive: false } );
-															</script>
-															<?php
+											<script type="text/javascript">
+												var <?php echo "response$count" ?>=new LiveValidation('<?php echo "response$count" ?>');
+												<?php echo "response$count" ?>.add( Validate.Inclusion, { within: [<?php echo $ext; ?>], failureMessage: "Illegal file type!", partialMatch: true, caseSensitive: false } );
+											</script>
+											<?php
 
                                         }
                                     }
@@ -500,68 +498,67 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_write_data.php') =
                         }
                     }
                     ?>
-							<tr class='break'>
-								<?php
-                                echo '<td colspan='.($span).'>';
-                    ?>
-									<h3>Assessment Complete?</h3>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<b><?php echo __($guid, 'Go Live Date') ?></b><br/>
-									<span style="font-size: 90%"><i><?php echo __($guid, '1. Format') ?> <?php if ($_SESSION[$guid]['i18n']['dateFormat'] == '') {
-    echo 'dd/mm/yyyy';
-} else {
-    echo $_SESSION[$guid]['i18n']['dateFormat'];
-}
-                    ?><br/><?php echo __($guid, '2. Column is hidden until date is reached.') ?></i></span>
-								</td>
-								<td class="right" colspan="<?php echo $span - 1 ?>">
-									<input name="completeDate" id="completeDate" maxlength=10 value="<?php echo dateConvertBack($guid, $row2['completeDate']) ?>" type="text" style="width: 300px">
-									<script type="text/javascript">
-										var completeDate=new LiveValidation('completeDate');
-										completeDate.add( Validate.Format, {pattern: <?php if ($_SESSION[$guid]['i18n']['dateFormatRegEx'] == '') {
-    echo "/^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/i";
-} else {
-    echo $_SESSION[$guid]['i18n']['dateFormatRegEx'];
-}
-                    ?>, failureMessage: "Use <?php if ($_SESSION[$guid]['i18n']['dateFormat'] == '') {
-    echo 'dd/mm/yyyy';
-} else {
-    echo $_SESSION[$guid]['i18n']['dateFormat'];
-}
-                    ?>." } );
-									 </script>
-									 <script type="text/javascript">
-										$(function() {
-											$( "#completeDate" ).datepicker();
-										});
-									</script>
-								</td>
-							</tr>
-							<tr>
-								<?php
-                                echo "<td style='text-align: left'>";
-                    echo getMaxUpload(true);
-                    echo '</td>';
-                    echo "<td class='right' colspan=".($span - 1).'>';
-                    ?>
-									<input name="count" id="count" value="<?php echo $count ?>" type="hidden">
-									<input type="submit" value="<?php echo __($guid, 'Submit');
-                    ?>">
+					<tr class='break'>
+						<?php
+						echo '<td colspan='.($span).'>';
+                    		?>
+							<h3>Assessment Complete?</h3>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<b><?php echo __($guid, 'Go Live Date') ?></b><br/>
+							<span style="font-size: 90%"><i><?php echo __($guid, '1. Format') ?> <?php if ($_SESSION[$guid]['i18n']['dateFormat'] == '') {
+								echo 'dd/mm/yyyy';
+							} else {
+								echo $_SESSION[$guid]['i18n']['dateFormat'];
+							}
+                    		?><br/><?php echo __($guid, '2. Column is hidden until date is reached.') ?></i></span>
+						</td>
+						<td class="right" colspan="<?php echo $span - 1 ?>">
+							<input name="completeDate" id="completeDate" maxlength=10 value="<?php echo dateConvertBack($guid, $row2['completeDate']) ?>" type="text" style="width: 300px">
+							<script type="text/javascript">
+								var completeDate=new LiveValidation('completeDate');
+								completeDate.add( Validate.Format, {pattern: <?php if ($_SESSION[$guid]['i18n']['dateFormatRegEx'] == '') {
+									echo "/^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/i";
+								} else {
+									echo $_SESSION[$guid]['i18n']['dateFormatRegEx'];
+								}
+								?>, failureMessage: "Use <?php if ($_SESSION[$guid]['i18n']['dateFormat'] == '') {
+									echo 'dd/mm/yyyy';
+								} else {
+									echo $_SESSION[$guid]['i18n']['dateFormat'];
+								}
+								?>." } );
+							 </script>
+							 <script type="text/javascript">
+								$(function() {
+									$( "#completeDate" ).datepicker();
+								});
+							</script>
+						</td>
+					</tr>
+					<tr>
+						<?php
+						echo "<td style='text-align: left'>";
+						echo getMaxUpload(true);
+						echo '</td>';
+						echo "<td class='right' colspan=".($span - 1).'>';
+						?>
+						<input name="count" id="count" value="<?php echo $count ?>" type="hidden">
+						<input type="submit" value="<?php echo __($guid, 'Submit'); ?>">
 
-								</td>
-							</tr>
-							<?php
-                        echo '</table>';
-                    echo '</form>';
-                }
-            }
-        }
+					</td>
+				</tr>
+				<?php
+				echo '</table>';
+				echo '</form>';
+			}
+		}
+	}
 
-        //Print sidebar
-        $_SESSION[$guid]['sidebarExtra'] = sidebarExtra($guid, $connection2, $gibbonCourseClassID, 'write');
+	//Print sidebar
+	$_SESSION[$guid]['sidebarExtra'] = sidebarExtra($guid, $connection2, $gibbonCourseClassID, 'write');
     }
 }
 ?>

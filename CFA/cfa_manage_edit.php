@@ -36,8 +36,7 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
 } else {
     //Get action with highest precendence
     $highestAction = getHighestGroupedAction($guid, $_GET['q'], $connection2);
-    if ($highestAction == false) {
-        echo "<div class='error'>";
+    if ($highestAction == false) { echo "<div class='error'>";
         echo __($guid, 'The highest grouped action cannot be determined.');
         echo '</div>';
     } else {
@@ -134,7 +133,7 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
 										<?php
 
                                     }
-                    ?>
+                    				?>
 
 									<script type="text/javascript">
 										var name2=new LiveValidation('name');
@@ -157,19 +156,18 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
 							<tr>
 								<td>
 									<b><?php echo __($guid, 'Attachment') ?></b><br/>
-									<?php if ($row2['attachment'] != '') {
-    ?>
+									<?php if ($row2['attachment'] != '') { ?>
 									<span style="font-size: 90%"><i><?php echo __($guid, 'Will overwrite existing attachment.') ?></i></span>
 									<?php
-}
-                    ?>
+									}
+                    				?>
 								</td>
 								<td class="right">
 									<?php
                                     if ($row2['attachment'] != '') {
                                         echo __($guid, 'Current attachment:')." <a href='".$_SESSION[$guid]['absoluteURL'].'/'.$row2['attachment']."'>".$row2['attachment'].'</a><br/><br/>';
                                     }
-                    ?>
+                   				 	?>
 									<input type="file" name="file" id="file"><br/><br/>
 									<?php
                                     //Get list of acceptable file extensions
@@ -180,16 +178,15 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
                                         $resultExt->execute($dataExt);
                                     } catch (PDOException $e) {
                                     }
-                    $ext = '';
-                    while ($rowExt = $resultExt->fetch()) {
-                        $ext = $ext."'.".$rowExt['extension']."',";
-                    }
-                    ?>
+									$ext = '';
+									while ($rowExt = $resultExt->fetch()) {
+										$ext = $ext."'.".$rowExt['extension']."',";
+									}
+									?>
 
 									<script type="text/javascript">
 										var file=new LiveValidation('file');
-										file.add( Validate.Inclusion, { within: [<?php echo $ext;
-                    ?>], failureMessage: "Illegal file type!", partialMatch: true, caseSensitive: false } );
+										file.add( Validate.Inclusion, { within: [<?php echo $ext; ?>], failureMessage: "Illegal file type!", partialMatch: true, caseSensitive: false } );
 									</script>
 								</td>
 							</tr>
@@ -223,34 +220,26 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
 								<tr>
 									<td>
 										<b><?php if ($attainmentAlternativeName != '') {
-    echo sprintf(__($guid, 'Assess %1$s?'), $attainmentAlternativeName);
-} else {
-    echo __($guid, 'Assess Attainment?');
-}
+											echo sprintf(__($guid, 'Assess %1$s?'), $attainmentAlternativeName);
+										} else {
+											echo __($guid, 'Assess Attainment?');
+										}
                                 ?> *</b><br/>
 									</td>
 									<td class="right">
-										<input <?php if ($row2['attainment'] == 'Y') {
-    echo 'checked';
-}
-                                ?> type="radio" name="attainment" value="Y" class="attainment" /> <?php echo __($guid, 'Yes') ?>
-										<input <?php if ($row2['attainment'] == 'N') {
-    echo 'checked';
-}
-                                ?> type="radio" name="attainment" value="N" class="attainment" /> <?php echo __($guid, 'No') ?>
+										<input <?php if ($row2['attainment'] == 'Y') { echo 'checked'; } ?> type="radio" name="attainment" value="Y" class="attainment" /> <?php echo __($guid, 'Yes') ?>
+										<input <?php if ($row2['attainment'] == 'N') { echo 'checked'; } ?> type="radio" name="attainment" value="N" class="attainment" /> <?php echo __($guid, 'No') ?>
 									</td>
 								</tr>
-								<tr id='gibbonScaleIDAttainmentRow' <?php if ($row2['attainment'] == 'N') {
-    echo "style='display: none'";
-}
+								<tr id='gibbonScaleIDAttainmentRow' <?php if ($row2['attainment'] == 'N') { echo "style='display: none'"; }
                                 ?>>
 									<td>
 										<b><?php if ($attainmentAlternativeName != '') {
-    echo $attainmentAlternativeName.' '.__($guid, 'Scale');
-} else {
-    echo __($guid, 'Attainment Scale');
-}
-                                ?></b><br/>
+											echo $attainmentAlternativeName.' '.__($guid, 'Scale');
+										} else {
+											echo __($guid, 'Attainment Scale');
+										}
+                                		?></b><br/>
 									</td>
 									<td class="right">
 										<select name="gibbonScaleIDAttainment" id="gibbonScaleIDAttainment" style="width: 302px">
@@ -262,29 +251,26 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
                                                 $resultSelect->execute($dataSelect);
                                             } catch (PDOException $e) {
                                             }
-                                echo "<option value=''></option>";
-                                while ($rowSelect = $resultSelect->fetch()) {
-                                    if ($row2['gibbonScaleIDAttainment'] == $rowSelect['gibbonScaleID']) {
-                                        echo "<option selected value='".$rowSelect['gibbonScaleID']."'>".htmlPrep(__($guid, $rowSelect['name'])).'</option>';
-                                    } else {
-                                        echo "<option value='".$rowSelect['gibbonScaleID']."'>".htmlPrep(__($guid, $rowSelect['name'])).'</option>';
-                                    }
-                                }
-                                ?>
+											echo "<option value=''></option>";
+											while ($rowSelect = $resultSelect->fetch()) {
+												if ($row2['gibbonScaleIDAttainment'] == $rowSelect['gibbonScaleID']) {
+													echo "<option selected value='".$rowSelect['gibbonScaleID']."'>".htmlPrep(__($guid, $rowSelect['name'])).'</option>';
+												} else {
+													echo "<option value='".$rowSelect['gibbonScaleID']."'>".htmlPrep(__($guid, $rowSelect['name'])).'</option>';
+												}
+											}
+											?>
 										</select>
 									</td>
 								</tr>
-								<tr id='gibbonRubricIDAttainmentRow' <?php if ($row2['attainment'] == 'N') {
-    echo "style='display: none'";
-}
-                                ?>>
+								<tr id='gibbonRubricIDAttainmentRow' <?php if ($row2['attainment'] == 'N') { echo "style='display: none'"; } ?>>
 									<td>
 										<b><?php if ($attainmentAlternativeName != '') {
-    echo $attainmentAlternativeName.' '.__($guid, 'Rubric');
-} else {
-    echo __($guid, 'Attainment Rubric');
-}
-                                ?></b><br/>
+											echo $attainmentAlternativeName.' '.__($guid, 'Rubric');
+										} else {
+											echo __($guid, 'Attainment Rubric');
+										}
+                                		?></b><br/>
 										<span style="font-size: 90%"><i><?php echo __($guid, 'Choose predefined rubric, if desired.') ?></i></span>
 									</td>
 									<td class="right">
@@ -305,21 +291,21 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
                                                 $resultSelect->execute($dataSelect);
                                             } catch (PDOException $e) {
                                             }
-                                while ($rowSelect = $resultSelect->fetch()) {
-                                    $label = '';
-                                    if ($rowSelect['category'] == '') {
-                                        $label = $rowSelect['name'];
-                                    } else {
-                                        $label = $rowSelect['category'].' - '.$rowSelect['name'];
-                                    }
-                                    $selected = '';
-                                    if ($row2['gibbonRubricIDAttainment'] == $rowSelect['gibbonRubricID']) {
-                                        $selected = 'selected';
-                                    }
-                                    echo "<option $selected value='".$rowSelect['gibbonRubricID']."'>$label</option>";
-                                }
-                                if ($row['gibbonDepartmentID'] != '') {
-                                    ?>
+											while ($rowSelect = $resultSelect->fetch()) {
+												$label = '';
+												if ($rowSelect['category'] == '') {
+													$label = $rowSelect['name'];
+												} else {
+													$label = $rowSelect['category'].' - '.$rowSelect['name'];
+												}
+												$selected = '';
+												if ($row2['gibbonRubricIDAttainment'] == $rowSelect['gibbonRubricID']) {
+													$selected = 'selected';
+												}
+												echo "<option $selected value='".$rowSelect['gibbonRubricID']."'>$label</option>";
+											}
+											if ($row['gibbonDepartmentID'] != '') {
+												?>
 												<optgroup label='--<?php echo __($guid, 'Learning Area Rubrics') ?>--'>
 												<?php
                                                 try {
@@ -335,21 +321,21 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
                                                     $resultSelect->execute($dataSelect);
                                                 } catch (PDOException $e) {
                                                 }
-                                    while ($rowSelect = $resultSelect->fetch()) {
-                                        $label = '';
-                                        if ($rowSelect['category'] == '') {
-                                            $label = $rowSelect['name'];
-                                        } else {
-                                            $label = $rowSelect['category'].' - '.$rowSelect['name'];
-                                        }
-                                        $selected = '';
-                                        if ($row2['gibbonRubricIDAttainment'] == $rowSelect['gibbonRubricID']) {
-                                            $selected = 'selected';
-                                        }
-                                        echo "<option $selected value='".$rowSelect['gibbonRubricID']."'>$label</option>";
-                                    }
-                                }
-                                ?>
+												while ($rowSelect = $resultSelect->fetch()) {
+													$label = '';
+													if ($rowSelect['category'] == '') {
+														$label = $rowSelect['name'];
+													} else {
+														$label = $rowSelect['category'].' - '.$rowSelect['name'];
+													}
+													$selected = '';
+													if ($row2['gibbonRubricIDAttainment'] == $rowSelect['gibbonRubricID']) {
+														$selected = 'selected';
+													}
+													echo "<option $selected value='".$rowSelect['gibbonRubricID']."'>$label</option>";
+												}
+											}
+											?>
 										</select>
 									</td>
 								</tr>
@@ -372,34 +358,26 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
 								<tr>
 									<td>
 										<b><?php if ($effortAlternativeName != '') {
-    echo sprintf(__($guid, 'Assess %1$s?'), $effortAlternativeName);
-} else {
-    echo __($guid, 'Assess Effort?');
-}
-                                ?> *</b><br/>
+											echo sprintf(__($guid, 'Assess %1$s?'), $effortAlternativeName);
+										} else {
+											echo __($guid, 'Assess Effort?');
+										}
+                                		?> *</b><br/>
 									</td>
 									<td class="right">
-										<input <?php if ($row2['effort'] == 'Y') {
-    echo 'checked';
-}
-                                ?> type="radio" name="effort" value="Y" class="effort" /> <?php echo __($guid, 'Yes') ?>
-										<input <?php if ($row2['effort'] == 'N') {
-    echo 'checked';
-}
-                                ?> type="radio" name="effort" value="N" class="effort" /> <?php echo __($guid, 'No') ?>
+										<input <?php if ($row2['effort'] == 'Y') { echo 'checked'; } ?> type="radio" name="effort" value="Y" class="effort" /> <?php echo __($guid, 'Yes') ?>
+										<input <?php if ($row2['effort'] == 'N') { echo 'checked'; } ?> type="radio" name="effort" value="N" class="effort" /> <?php echo __($guid, 'No') ?>
 									</td>
 								</tr>
-								<tr id='gibbonScaleIDEffortRow' <?php if ($row2['effort'] == 'N') {
-    echo "style='display: none'";
-}
+								<tr id='gibbonScaleIDEffortRow' <?php if ($row2['effort'] == 'N') { echo "style='display: none'"; }
                                 ?>>
 									<td>
 										<b><?php if ($effortAlternativeName != '') {
-    echo $effortAlternativeName.' '.__($guid, 'Scale');
-} else {
-    echo __($guid, 'Effort Scale');
-}
-                                ?></b><br/>
+											echo $effortAlternativeName.' '.__($guid, 'Scale');
+										} else {
+											echo __($guid, 'Effort Scale');
+										}
+                                		?></b><br/>
 									</td>
 									<td class="right">
 										<select name="gibbonScaleIDEffort" id="gibbonScaleIDEffort" style="width: 302px">
@@ -411,29 +389,27 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
                                                 $resultSelect->execute($dataSelect);
                                             } catch (PDOException $e) {
                                             }
-                                echo "<option value=''></option>";
-                                while ($rowSelect = $resultSelect->fetch()) {
-                                    if ($row2['gibbonScaleIDEffort'] == $rowSelect['gibbonScaleID']) {
-                                        echo "<option selected value='".$rowSelect['gibbonScaleID']."'>".htmlPrep(__($guid, $rowSelect['name'])).'</option>';
-                                    } else {
-                                        echo "<option value='".$rowSelect['gibbonScaleID']."'>".htmlPrep(__($guid, $rowSelect['name'])).'</option>';
-                                    }
-                                }
-                                ?>
+											echo "<option value=''></option>";
+											while ($rowSelect = $resultSelect->fetch()) {
+												if ($row2['gibbonScaleIDEffort'] == $rowSelect['gibbonScaleID']) {
+													echo "<option selected value='".$rowSelect['gibbonScaleID']."'>".htmlPrep(__($guid, $rowSelect['name'])).'</option>';
+												} else {
+													echo "<option value='".$rowSelect['gibbonScaleID']."'>".htmlPrep(__($guid, $rowSelect['name'])).'</option>';
+												}
+											}
+											?>
 										</select>
 									</td>
 								</tr>
-								<tr id='gibbonRubricIDEffortRow' <?php if ($row2['effort'] == 'N') {
-    echo "style='display: none'";
-}
+								<tr id='gibbonRubricIDEffortRow' <?php if ($row2['effort'] == 'N') { echo "style='display: none'"; }
                                 ?>>
 									<td>
 										<b><?php if ($effortAlternativeName != '') {
-    echo $effortAlternativeName.' '.__($guid, 'Rubric');
-} else {
-    echo __($guid, 'Effort Rubric');
-}
-                                ?></b><br/>
+											echo $effortAlternativeName.' '.__($guid, 'Rubric');
+										} else {
+											echo __($guid, 'Effort Rubric');
+										}
+                                		?></b><br/>
 										<span style="font-size: 90%"><i><?php echo __($guid, 'Choose predefined rubric, if desired.') ?></i></span>
 									</td>
 									<td class="right">
@@ -454,21 +430,21 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
                                                 $resultSelect->execute($dataSelect);
                                             } catch (PDOException $e) {
                                             }
-                                while ($rowSelect = $resultSelect->fetch()) {
-                                    $label = '';
-                                    if ($rowSelect['category'] == '') {
-                                        $label = $rowSelect['name'];
-                                    } else {
-                                        $label = $rowSelect['category'].' - '.$rowSelect['name'];
-                                    }
-                                    $selected = '';
-                                    if ($row2['gibbonRubricIDEffort'] == $rowSelect['gibbonRubricID']) {
-                                        $selected = 'selected';
-                                    }
-                                    echo "<option $selected value='".$rowSelect['gibbonRubricID']."'>$label</option>";
-                                }
-                                if ($row['gibbonDepartmentID'] != '') {
-                                    ?>
+											while ($rowSelect = $resultSelect->fetch()) {
+												$label = '';
+												if ($rowSelect['category'] == '') {
+													$label = $rowSelect['name'];
+												} else {
+													$label = $rowSelect['category'].' - '.$rowSelect['name'];
+												}
+												$selected = '';
+												if ($row2['gibbonRubricIDEffort'] == $rowSelect['gibbonRubricID']) {
+													$selected = 'selected';
+												}
+												echo "<option $selected value='".$rowSelect['gibbonRubricID']."'>$label</option>";
+											}
+											if ($row['gibbonDepartmentID'] != '') {
+												?>
 												<optgroup label='--<?php echo __($guid, 'Learning Area Rubrics') ?>--'>
 												<?php
                                                 try {
@@ -484,21 +460,21 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
                                                     $resultSelect->execute($dataSelect);
                                                 } catch (PDOException $e) {
                                                 }
-                                    while ($rowSelect = $resultSelect->fetch()) {
-                                        $label = '';
-                                        if ($rowSelect['category'] == '') {
-                                            $label = $rowSelect['name'];
-                                        } else {
-                                            $label = $rowSelect['category'].' - '.$rowSelect['name'];
-                                        }
-                                        $selected = '';
-                                        if ($row2['gibbonRubricIDEffort'] == $rowSelect['gibbonRubricID']) {
-                                            $selected = 'selected';
-                                        }
-                                        echo "<option $selected value='".$rowSelect['gibbonRubricID']."'>$label</option>";
-                                    }
-                                }
-                                ?>
+												while ($rowSelect = $resultSelect->fetch()) {
+													$label = '';
+													if ($rowSelect['category'] == '') {
+														$label = $rowSelect['name'];
+													} else {
+														$label = $rowSelect['category'].' - '.$rowSelect['name'];
+													}
+													$selected = '';
+													if ($row2['gibbonRubricIDEffort'] == $rowSelect['gibbonRubricID']) {
+														$selected = 'selected';
+													}
+													echo "<option $selected value='".$rowSelect['gibbonRubricID']."'>$label</option>";
+												}
+											}
+											?>
 										</select>
 									</td>
 								</tr>
@@ -507,14 +483,8 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
 										<b><?php echo __($guid, 'Include Comment?') ?> *</b><br/>
 									</td>
 									<td class="right">
-										<input <?php if ($row2['comment'] == 'Y') {
-    echo 'checked';
-}
-                                ?> type="radio" name="comment" value="Y" class="comment" /> <?php echo __($guid, 'Yes') ?>
-										<input <?php if ($row2['comment'] == 'N') {
-    echo 'checked';
-}
-                                ?> type="radio" name="comment" value="N" class="comment" /> <?php echo __($guid, 'No') ?>
+										<input <?php if ($row2['comment'] == 'Y') { echo 'checked'; } ?> type="radio" name="comment" value="Y" class="comment" /> <?php echo __($guid, 'Yes') ?>
+										<input <?php if ($row2['comment'] == 'N') { echo 'checked'; } ?> type="radio" name="comment" value="N" class="comment" /> <?php echo __($guid, 'No') ?>
 									</td>
 								</tr>
 								<tr>
@@ -522,31 +492,23 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
 										<b><?php echo __($guid, 'Include Uploaded Response?') ?> *</b><br/>
 									</td>
 									<td class="right">
-										<input <?php if ($row2['uploadedResponse'] == 'Y') {
-    echo 'checked';
-}
-                                ?> type="radio" name="uploadedResponse" value="Y" class="uploadedResponse" /> <?php echo __($guid, 'Yes') ?>
-										<input <?php if ($row2['uploadedResponse'] == 'N') {
-    echo 'checked';
-}
-                                ?> type="radio" name="uploadedResponse" value="N" class="uploadedResponse" /> <?php echo __($guid, 'No') ?>
+										<input <?php if ($row2['uploadedResponse'] == 'Y') { echo 'checked'; } ?> type="radio" name="uploadedResponse" value="Y" class="uploadedResponse" /> <?php echo __($guid, 'Yes') ?>
+										<input <?php if ($row2['uploadedResponse'] == 'N') { echo 'checked'; } ?> type="radio" name="uploadedResponse" value="N" class="uploadedResponse" /> <?php echo __($guid, 'No') ?>
 									</td>
 								</tr>
 								<?php
 
                             } else {
                                 ?>
-								<tr id='gibbonRubricIDAttainmentRow' <?php if ($row2['attainment'] == 'N') {
-    echo "style='display: none'";
-}
+								<tr id='gibbonRubricIDAttainmentRow' <?php if ($row2['attainment'] == 'N') { echo "style='display: none'"; }
                                 ?>>
 									<td>
 										<b><?php if ($attainmentAlternativeName != '') {
-    echo $attainmentAlternativeName.' '.__($guid, 'Rubric');
-} else {
-    echo __($guid, 'Attainment Rubric');
-}
-                                ?></b><br/>
+											echo $attainmentAlternativeName.' '.__($guid, 'Rubric');
+										} else {
+											echo __($guid, 'Attainment Rubric');
+										}
+                                		?></b><br/>
 										<span style="font-size: 90%"><i><?php echo __($guid, 'Choose predefined rubric, if desired.') ?></i></span>
 									</td>
 									<td class="right">
@@ -567,21 +529,21 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
                                                 $resultSelect->execute($dataSelect);
                                             } catch (PDOException $e) {
                                             }
-                                while ($rowSelect = $resultSelect->fetch()) {
-                                    $label = '';
-                                    if ($rowSelect['category'] == '') {
-                                        $label = $rowSelect['name'];
-                                    } else {
-                                        $label = $rowSelect['category'].' - '.$rowSelect['name'];
-                                    }
-                                    $selected = '';
-                                    if ($row2['gibbonRubricIDAttainment'] == $rowSelect['gibbonRubricID']) {
-                                        $selected = 'selected';
-                                    }
-                                    echo "<option $selected value='".$rowSelect['gibbonRubricID']."'>$label</option>";
-                                }
-                                if ($row['gibbonDepartmentID'] != '') {
-                                    ?>
+											while ($rowSelect = $resultSelect->fetch()) {
+												$label = '';
+												if ($rowSelect['category'] == '') {
+													$label = $rowSelect['name'];
+												} else {
+													$label = $rowSelect['category'].' - '.$rowSelect['name'];
+												}
+												$selected = '';
+												if ($row2['gibbonRubricIDAttainment'] == $rowSelect['gibbonRubricID']) {
+													$selected = 'selected';
+												}
+												echo "<option $selected value='".$rowSelect['gibbonRubricID']."'>$label</option>";
+											}
+											if ($row['gibbonDepartmentID'] != '') {
+												?>
 												<optgroup label='--<?php echo __($guid, 'Learning Area Rubrics') ?>--'>
 												<?php
                                                 try {
@@ -597,28 +559,28 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
                                                     $resultSelect->execute($dataSelect);
                                                 } catch (PDOException $e) {
                                                 }
-                                    while ($rowSelect = $resultSelect->fetch()) {
-                                        $label = '';
-                                        if ($rowSelect['category'] == '') {
-                                            $label = $rowSelect['name'];
-                                        } else {
-                                            $label = $rowSelect['category'].' - '.$rowSelect['name'];
-                                        }
-                                        $selected = '';
-                                        if ($row2['gibbonRubricIDAttainment'] == $rowSelect['gibbonRubricID']) {
-                                            $selected = 'selected';
-                                        }
-                                        echo "<option $selected value='".$rowSelect['gibbonRubricID']."'>$label</option>";
-                                    }
-                                }
-                                ?>
+												while ($rowSelect = $resultSelect->fetch()) {
+													$label = '';
+													if ($rowSelect['category'] == '') {
+														$label = $rowSelect['name'];
+													} else {
+														$label = $rowSelect['category'].' - '.$rowSelect['name'];
+													}
+													$selected = '';
+													if ($row2['gibbonRubricIDAttainment'] == $rowSelect['gibbonRubricID']) {
+														$selected = 'selected';
+													}
+													echo "<option $selected value='".$rowSelect['gibbonRubricID']."'>$label</option>";
+												}
+											}
+											?>
 										</select>
 									</td>
 								</tr>
 								<?php
 
                             }
-                    ?>
+                   		 	?>
 
 							<tr class='break'>
 								<td colspan=2>
@@ -629,27 +591,27 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
 								<td>
 									<b><?php echo __($guid, 'Go Live Date') ?></b><br/>
 									<span style="font-size: 90%"><i><?php echo __($guid, '1. Format') ?> <?php if ($_SESSION[$guid]['i18n']['dateFormat'] == '') {
-    echo 'dd/mm/yyyy';
-} else {
-    echo $_SESSION[$guid]['i18n']['dateFormat'];
-}
-                    ?><br/><?php echo __($guid, '2. Column is hidden until date is reached.') ?></i></span>
+										echo 'dd/mm/yyyy';
+									} else {
+										echo $_SESSION[$guid]['i18n']['dateFormat'];
+									}
+									?><br/><?php echo __($guid, '2. Column is hidden until date is reached.') ?></i></span>
 								</td>
 								<td class="right">
 									<input name="completeDate" id="completeDate" maxlength=10 value="<?php echo dateConvertBack($guid, $row2['completeDate']) ?>" type="text" style="width: 300px">
 									<script type="text/javascript">
 										var completeDate=new LiveValidation('completeDate');
 										completeDate.add( Validate.Format, {pattern: <?php if ($_SESSION[$guid]['i18n']['dateFormatRegEx'] == '') {
-    echo "/^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/i";
-} else {
-    echo $_SESSION[$guid]['i18n']['dateFormatRegEx'];
-}
-                    ?>, failureMessage: "Use <?php if ($_SESSION[$guid]['i18n']['dateFormat'] == '') {
-    echo 'dd/mm/yyyy';
-} else {
-    echo $_SESSION[$guid]['i18n']['dateFormat'];
-}
-                    ?>." } );
+											echo "/^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/i";
+										} else {
+											echo $_SESSION[$guid]['i18n']['dateFormatRegEx'];
+										}
+										?>, failureMessage: "Use <?php if ($_SESSION[$guid]['i18n']['dateFormat'] == '') {
+											echo 'dd/mm/yyyy';
+										} else {
+											echo $_SESSION[$guid]['i18n']['dateFormat'];
+										}
+                    					?>." } );
 									 </script>
 									 <script type="text/javascript">
 										$(function() {
@@ -678,7 +640,7 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
 											<h3><?php echo __($guid, 'Related Columns') ?></h3>
 											<p>
 												<?php echo __($guid, 'This column is part of a set of columns within your department: would you like to extend these changes to those columns?');
-                                    ?>
+                                    		?>
 											</p>
 										</td>
 									</tr>
@@ -689,7 +651,7 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
 										<td class="right">
 											<?php
                                             echo "<fieldset style='border: none'>";
-                                    ?>
+                                    		?>
 											<script type="text/javascript">
 												$(function () {
 													$('.checkall').click(function () {
@@ -699,35 +661,32 @@ if (isActionAccessible($guid, $connection2, '/modules/CFA/cfa_manage_edit.php') 
 											</script>
 											<?php
                                             echo __($guid, 'All/None')." <input checked type='checkbox' class='checkall'><br/>";
-                                    $yearGroups = getYearGroups($connection2);
-                                    if ($yearGroups == '') {
-                                        echo '<i>'.__($guid, 'No year groups available.').'</i>';
-                                    } else {
-                                        $count = 0;
-                                        while ($rowGrouped = $resultGrouped->fetch()) {
-                                            echo $rowGrouped['course'].'.'.$rowGrouped['class']." <input checked type='checkbox' name='gibbonCourseClassID[]' value='".$rowGrouped['gibbonCourseClassID']."'><br/>";
-                                        }
-                                    }
-                                    echo '</fieldset>';
-                                    ?>
+											$yearGroups = getYearGroups($connection2);
+											if ($yearGroups == '') {
+												echo '<i>'.__($guid, 'No year groups available.').'</i>';
+											} else {
+												$count = 0;
+												while ($rowGrouped = $resultGrouped->fetch()) {
+													echo $rowGrouped['course'].'.'.$rowGrouped['class']." <input checked type='checkbox' name='gibbonCourseClassID[]' value='".$rowGrouped['gibbonCourseClassID']."'><br/>";
+												}
+											}
+											echo '</fieldset>';
+											?>
 										</td>
 									</tr>
 									<?php
 
                                 }
                             }
-                    ?>
+                    		?>
 							<tr>
 								<td>
-									<span style="font-size: 90%"><i>* <?php echo __($guid, 'denotes a required field');
-                    ?><br/>
-									<?php echo getMaxUpload($guid);
-                    ?>
+									<span style="font-size: 90%"><i>* <?php echo __($guid, 'denotes a required field'); ?><br/>
+									<?php echo getMaxUpload($guid); ?>
 									</i></span>
 								</td>
 								<td class="right">
-									<input type="submit" value="<?php echo __($guid, 'Submit');
-                    ?>">
+									<input type="submit" value="<?php echo __($guid, 'Submit'); ?>">
 								</td>
 							</tr>
 						</table>
